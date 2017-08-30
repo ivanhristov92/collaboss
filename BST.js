@@ -1,11 +1,10 @@
 
 
-var node = {
-    value: 125,
-    left: null,
-    right: null
-};
-
+function Node(val){
+    this.value = val;
+    this.left = null;
+    this.right = null;
+}
 
 class BST {
 
@@ -17,11 +16,17 @@ class BST {
 
     contains(value){}
 
+    maxNode(node){}
+
+    minNode(node){}
+
     remove(value){}
 
     traverse(process){}
 
     size(){}
+
+    height(){}
 
     toArray(){}
 
