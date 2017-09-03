@@ -1,21 +1,15 @@
 "use strict";
 var inOrder = require('./inOrder');
 var balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
-var findParent = require("./findParent");
-var DeleteMethods = {
+var findParent = require('./findParent');
+var BSTDelete = {
     deleteLeaf: function (parent) {
-        parent.left = null;
-        parent.right = null;
+        parent.left = parent.right = null;
     },
     deleteNodeWithOneChild: function (parent) {
-        if (parent.left) {
-            var grandChild = parent.left.left ? parent.left.left : parent.left.right;
-            parent.left = grandChild;
-        }
-        else {
-            var grandChild = parent.right.left ? parent.right.left : parent.right.right;
-            parent.right = grandChild;
-        }
+        parent.left
+            ? (parent.left = parent.left.left || parent.left.right)
+            : (parent.right = parent.right.left || parent.right.right);
     },
     deleteNodeWithTwoChildren: function (parent) {
         var reachedParent = false;
@@ -30,75 +24,55 @@ var DeleteMethods = {
             }
         })(Object).assign(parent, nextOfKin);
         var parentOfNextOfKin = findParent(nextOfKin.value);
-        if (parentOfNextOfKin.left.value = nextOfKin.value) {
+        if ((parentOfNextOfKin.left.value === nextOfKin.value)) {
             parentOfNextOfKin.left = null;
         }
         else {
             parentOfNextOfKin.right = null;
         }
-    }
+    },
 };
-function chooseDeleteMethod() { }
+function chooseDeleteMethod(_a) {
+    var isLeaf = _a.isLeaf, isOnlyChild = _a.isOnlyChild;
+    if (isLeaf)
+        return BSTDelete.deleteLeaf;
+    if (isOnlyChild)
+        return BSTDelete.deleteNodeWithOneChild;
+    return BSTDelete.deleteNodeWithTwoChildren;
+}
 function findParentAndChild(root, childValue) {
     var toReturn = {
         parent: null,
         child: null,
-        isLeft: false,
-        isRight: false,
     };
     inOrder(root, function (node) {
         if (node.left && node.left.value === childValue) {
             toReturn.parent = node;
             toReturn.child = node.left;
-            toReturn.isLeft = true;
-            toReturn.isRight = false;
         }
         else if (node.right && node.right.value === childValue) {
             toReturn.parent = node;
             toReturn.child = node.right;
-            toReturn.isLeft = false;
-            toReturn.isRight = true;
         }
     });
     return toReturn;
 }
-function isLeaf(node) {
-    return node && (!node.left && !node.right);
+function generateNodeMeta(root, value) {
+    var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
+    return {
+        isLeaf: !child.left && !child.right,
+        isOnlyChild: !(parent.left && parent.right),
+    };
 }
-function freeNode(node) {
-    node.left = null;
-    node.right = null;
+function deleteNode(root, value) {
+    var nodeMeta = generateNodeMeta(root, value);
+    var deleteFn = chooseDeleteMethod(nodeMeta);
+    deleteFn(root);
 }
-exports = (function (inOrder) {
+exports = (function (deleteNode, balanceIfNecessary) {
     return function deleteNode(root, value) {
-        var parent = null;
-        var isLeaf = false;
-        var isLeftChild;
-        inOrder(root, function (node) {
-            if (node.left && node.left.value === value) {
-                parent = node;
-                if (!node.left.left && !node.left.right) {
-                    isLeaf = true;
-                }
-                isLeftChild = true;
-            }
-            else if (node.right && node.right.value === value) {
-                parent = node;
-                if (!node.right.left && !node.right.right) {
-                    isLeaf = true;
-                }
-                isLeftChild = false;
-            }
-        });
-        if (isLeaf) {
-            if (isLeftChild === true) {
-                parent.left = null;
-            }
-            else if (isLeftChild === false) {
-                parent.right = null;
-            }
-        }
+        deleteNode(root, value);
         balanceIfNecessary(root);
     };
-})(inOrder);
+})(deleteNode, balanceIfNecessary);
 //# sourceMappingURL=delete.js.map
