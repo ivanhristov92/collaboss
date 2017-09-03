@@ -1,0 +1,22 @@
+{
+  "name": "collaboss",
+  "version": "1.0.0",
+  "description": "",
+  "main": "BST.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ivanhristov92/collaboss.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ivanhristov92/collaboss/issues"
+  },
+  "homepage": "https://github.com/ivanhristov92/collaboss#readme",
+  "dependencies": {
+    "ramda": "^0.24.1"
+  }
+}
