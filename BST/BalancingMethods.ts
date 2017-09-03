@@ -27,7 +27,21 @@ const balancingMethods = Object.freeze({
     newNode.left = (<any>Object).assign({}, C);
     return newNode;
   },
-  RR() {},
+  RR(imbalanced: iBST) {
+
+    let A = imbalanced;
+    let Al = imbalanced.left;
+    let B = imbalanced.right;
+    let Bl = imbalanced.right.left;
+    let C = imbalanced.right.right;
+
+    let newNode = (<any>Object).assign({}, B);
+    newNode.left = (<any>Object).assign({}, A);
+    newNode.left.left = Al ? (<any>Object).assign({}, Al) : null;
+    newNode.left.right = Bl ? (<any>Object).assign({}, Bl) : null;
+    newNode.right = (<any>Object).assign({}, C);
+    return newNode;
+  },
   LR() {},
   RL() {},
 });
@@ -67,7 +81,7 @@ const chooseTreeBalancingMethod = (function(LL, LR, RR, RL) {
   balancingMethods.LL,
   balancingMethods.LR,
   balancingMethods.RR,
-  balancingMethods.RL,
+  balancingMethods.RL
 );
 
 module.exports.balanceIfNecessary = (function(

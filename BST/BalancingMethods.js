@@ -23,7 +23,19 @@ var balancingMethods = Object.freeze({
         newNode.left = Object.assign({}, C);
         return newNode;
     },
-    RR: function () { },
+    RR: function (imbalanced) {
+        var A = imbalanced;
+        var Al = imbalanced.left;
+        var B = imbalanced.right;
+        var Bl = imbalanced.right.left;
+        var C = imbalanced.right.right;
+        var newNode = Object.assign({}, B);
+        newNode.left = Object.assign({}, A);
+        newNode.left.left = Al ? Object.assign({}, Al) : null;
+        newNode.left.right = Bl ? Object.assign({}, Bl) : null;
+        newNode.right = Object.assign({}, C);
+        return newNode;
+    },
     LR: function () { },
     RL: function () { },
 });
