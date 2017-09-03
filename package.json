@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ivanhristov92/collaboss#readme",
   "dependencies": {
+    "@types/node": "^8.0.26",
     "ramda": "^0.24.1"
   }
 }
