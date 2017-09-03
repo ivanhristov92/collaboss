@@ -8,7 +8,7 @@ export interface iBST {
   balanceFactor: number,
 
   insert: (value: number)=>void,
-  inOrder: (fn?: Function)=>void
+  inOrder: (root:iBST | null, fn?: Function)=>void
 }
 
 /**

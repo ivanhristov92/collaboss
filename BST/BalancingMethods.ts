@@ -1,7 +1,7 @@
 import { iBST } from './BST';
 
-import {calculateHeights} from './calculateHeights';
-import {findParent, iFindParent, iFindParentOutput} from './findParent';
+import { calculateHeights } from './calculateHeights';
+import { findParent, iFindParent, iFindParentOutput } from './findParent';
 
 const inOrder = require('./inOrder');
 const log = require('./utils').log;
@@ -67,11 +67,11 @@ const chooseTreeBalancingMethod = (function(LL, LR, RR, RL) {
   balancingMethods.LL,
   balancingMethods.LR,
   balancingMethods.RR,
-  balancingMethods.RL
+  balancingMethods.RL,
 );
 
 module.exports.balanceIfNecessary = (function(
-  isTreeBalanced: (root: iBST)=> iBST | null,
+  isTreeBalanced: (root: iBST) => iBST | null,
   findParent: (root: iBST, childValue: number) => iFindParentOutput,
   chooseMethod: (root: iBST) => (imbalancedTree: iBST) => iBST,
 ) {
@@ -89,10 +89,14 @@ module.exports.balanceIfNecessary = (function(
 
       let balancedSubTree = balanceFn(imbalancedSubTree);
 
-      parent.fromLeft
-        ? (parent.node.left = balancedSubTree)
-        : (parent.node.right = balancedSubTree);
-
+      if (parent.node) {
+        parent.fromLeft
+          ? (parent.node.left = balancedSubTree)
+          : (parent.node.right = balancedSubTree);
+      } else {
+        // we modified the root node
+       (<any>Object).assign(root, balancedSubTree);
+      }
       // update the heights and balanceFactors
       // in all nodes
       isTreeBalanced(root);

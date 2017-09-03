@@ -75,9 +75,15 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced, findParent, choos
             var parent_1 = findParent(root, imbalancedSubTree.value);
             var balanceFn = chooseMethod(imbalancedSubTree);
             var balancedSubTree = balanceFn(imbalancedSubTree);
-            parent_1.fromLeft
-                ? (parent_1.node.left = balancedSubTree)
-                : (parent_1.node.right = balancedSubTree);
+            if (parent_1.node) {
+                parent_1.fromLeft
+                    ? (parent_1.node.left = balancedSubTree)
+                    : (parent_1.node.right = balancedSubTree);
+            }
+            else {
+                // we modified the root node
+                Object.assign(root, balancedSubTree);
+            }
             // update the heights and balanceFactors
             // in all nodes
             isTreeBalanced(root);
