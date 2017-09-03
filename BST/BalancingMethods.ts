@@ -28,7 +28,6 @@ const balancingMethods = Object.freeze({
     return newNode;
   },
   RR(imbalanced: iBST) {
-
     let A = imbalanced;
     let Al = imbalanced.left;
     let B = imbalanced.right;
@@ -43,7 +42,6 @@ const balancingMethods = Object.freeze({
     return newNode;
   },
   LR(imbalanced: iBST) {
-
     let A = imbalanced;
     let B = imbalanced.left;
     let C = imbalanced.left.right;
@@ -56,7 +54,6 @@ const balancingMethods = Object.freeze({
     return newNode;
   },
   RL(imbalanced: iBST) {
-
     let A = imbalanced;
     let B = imbalanced.right;
     let C = imbalanced.right.left;
@@ -105,13 +102,44 @@ const chooseTreeBalancingMethod = (function(LL, LR, RR, RL) {
   balancingMethods.LL,
   balancingMethods.LR,
   balancingMethods.RR,
-  balancingMethods.RL
+  balancingMethods.RL,
 );
+
+function attachingStrategy(
+  root: iBST,
+  parent: iFindParentOutput,
+  balancedSubTree: iBST,
+) {
+  if (parent.node) {
+    parent.fromLeft
+      ? (parent.node.left = balancedSubTree)
+      : (parent.node.right = balancedSubTree);
+  } else {
+    // we modified the root node
+    (<any>Object).assign(root, balancedSubTree);
+  }
+}
+
+const balancingStrategy = (function(
+  findParent: (root: iBST, childValue: number) => iFindParentOutput,
+  chooseMethod: (root: iBST) => (imbalancedTree: iBST) => iBST,
+  attachingStrategy: (
+    root: iBST,
+    parent: iFindParentOutput,
+    balancedSubTree: iBST,
+  ) => void,
+) {
+  return function balancingStrategy(root: iBST, imbalancedSubTree: iBST) {
+    let parent = findParent(root, imbalancedSubTree.value);
+    let balanceFn = chooseMethod(imbalancedSubTree);
+    let balancedSubTree = balanceFn(imbalancedSubTree);
+
+    attachingStrategy(root, parent, balancedSubTree);
+  };
+})(findParent, chooseTreeBalancingMethod, attachingStrategy);
 
 module.exports.balanceIfNecessary = (function(
   isTreeBalanced: (root: iBST) => iBST | null,
-  findParent: (root: iBST, childValue: number) => iFindParentOutput,
-  chooseMethod: (root: iBST) => (imbalancedTree: iBST) => iBST,
 ) {
   /**
      *
@@ -122,26 +150,15 @@ module.exports.balanceIfNecessary = (function(
     // and look for imbalanced areas
     let imbalancedSubTree = isTreeBalanced(root);
 
-    if(!imbalancedSubTree){return;}
-
-    if (imbalancedSubTree) {
-      let parent = findParent(root, imbalancedSubTree.value);
-      let balanceFn = chooseMethod(imbalancedSubTree);
-
-      let balancedSubTree = balanceFn(imbalancedSubTree);
-
-      if (parent.node) {
-        parent.fromLeft
-          ? (parent.node.left = balancedSubTree)
-          : (parent.node.right = balancedSubTree);
-      } else {
-        // we modified the root node
-       (<any>Object).assign(root, balancedSubTree);
-      }
-      // update the heights and balanceFactors
-      // in all nodes
-      balanceIfNecessary(root);
-      // log('root', root);
+    if (!imbalancedSubTree) {
+      return;
     }
+
+    balancingStrategy(root, imbalancedSubTree);
+
+    // update the heights and balanceFactors
+    // in all nodes
+    // re-balance if necessary
+    balanceIfNecessary(root);
   };
-})(calculateHeights, findParent, chooseTreeBalancingMethod);
+})(calculateHeights);

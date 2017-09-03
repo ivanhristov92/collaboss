@@ -94,7 +94,26 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
         }
     };
 })(balancingMethods.LL, balancingMethods.LR, balancingMethods.RR, balancingMethods.RL);
-module.exports.balanceIfNecessary = (function (isTreeBalanced, findParent, chooseMethod) {
+function attachingStrategy(root, parent, balancedSubTree) {
+    if (parent.node) {
+        parent.fromLeft
+            ? (parent.node.left = balancedSubTree)
+            : (parent.node.right = balancedSubTree);
+    }
+    else {
+        // we modified the root node
+        Object.assign(root, balancedSubTree);
+    }
+}
+var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) {
+    return function balancingStrategy(root, imbalancedSubTree) {
+        var parent = findParent(root, imbalancedSubTree.value);
+        var balanceFn = chooseMethod(imbalancedSubTree);
+        var balancedSubTree = balanceFn(imbalancedSubTree);
+        attachingStrategy(root, parent, balancedSubTree);
+    };
+})(findParent_1.findParent, chooseTreeBalancingMethod, attachingStrategy);
+module.exports.balanceIfNecessary = (function (isTreeBalanced) {
     /**
        *
        * @param root {BST}
@@ -106,23 +125,11 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced, findParent, choos
         if (!imbalancedSubTree) {
             return;
         }
-        if (imbalancedSubTree) {
-            var parent_1 = findParent(root, imbalancedSubTree.value);
-            var balanceFn = chooseMethod(imbalancedSubTree);
-            var balancedSubTree = balanceFn(imbalancedSubTree);
-            if (parent_1.node) {
-                parent_1.fromLeft
-                    ? (parent_1.node.left = balancedSubTree)
-                    : (parent_1.node.right = balancedSubTree);
-            }
-            else {
-                // we modified the root node
-                Object.assign(root, balancedSubTree);
-            }
-            // update the heights and balanceFactors
-            // in all nodes
-            balanceIfNecessary(root);
-        }
+        balancingStrategy(root, imbalancedSubTree);
+        // update the heights and balanceFactors
+        // in all nodes
+        // re-balance if necessary
+        balanceIfNecessary(root);
     };
-})(calculateHeights_1.calculateHeights, findParent_1.findParent, chooseTreeBalancingMethod);
+})(calculateHeights_1.calculateHeights);
 //# sourceMappingURL=BalancingMethods.js.map
