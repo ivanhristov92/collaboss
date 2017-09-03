@@ -34,6 +34,7 @@ export function BST(value: number): iBST {
 
 BST.prototype.insert = require('./insert');
 BST.prototype.inOrder = require('./inOrder');
+BST.prototype.delete = require('./delete');
 
 let bst = BST(1);
 bst.insert(-1);
