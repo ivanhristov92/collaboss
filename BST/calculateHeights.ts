@@ -30,4 +30,4 @@ export function calculateHeights(root: iBST): iBST | null {
   })(root);
 
   return imbalanced;
-};
+}

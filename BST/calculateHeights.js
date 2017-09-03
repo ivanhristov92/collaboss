@@ -26,5 +26,4 @@ function calculateHeights(root) {
     return imbalanced;
 }
 exports.calculateHeights = calculateHeights;
-;
 //# sourceMappingURL=calculateHeights.js.map

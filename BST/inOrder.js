@@ -12,4 +12,4 @@ module.exports = function(root, fn = ()=>{}) {
         fn(root);
         traverse(root.right, fn);
     })(root);
-};
+}
