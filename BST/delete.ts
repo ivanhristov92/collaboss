@@ -3,6 +3,8 @@ const inOrder = require('./inOrder');
 const balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 const findParent = require('./findParent');
 
+// ---------helper----
+// -------------------
 const findInorderSuccessor = (function(inOrder) {
   return function findInorderSuccessor(root, parentValue: number) {
     let reachedParent = false;
@@ -20,6 +22,8 @@ const findInorderSuccessor = (function(inOrder) {
     return nextOfKin;
   };
 })(inOrder);
+// -------------------
+
 
 type BSTDeleteMethod = (parent: iBST) => void;
 

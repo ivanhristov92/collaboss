@@ -2,6 +2,8 @@
 var inOrder = require('./inOrder');
 var balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 var findParent = require('./findParent');
+// ---------helper----
+// -------------------
 var findInorderSuccessor = (function (inOrder) {
     return function findInorderSuccessor(root, parentValue) {
         var reachedParent = false;
