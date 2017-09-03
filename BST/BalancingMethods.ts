@@ -44,10 +44,18 @@ const balancingMethods = Object.freeze({
   },
   LR(imbalanced: iBST) {
 
+    let A = imbalanced;
+    let B = imbalanced.left;
+    let C = imbalanced.left.right;
+
+    let newNode = (<any>Object).assign({}, C);
+    newNode.left = (<any>Object).assign({}, B);
+    newNode.left.right = null;
+    newNode.right = (<any>Object).assign({}, A);
+    newNode.right.left = null;
+    return newNode;
   },
   RL(imbalanced: iBST) {
-
-    console.log("RLRLRL");
 
     let A = imbalanced;
     let B = imbalanced.right;

@@ -37,9 +37,17 @@ var balancingMethods = Object.freeze({
         return newNode;
     },
     LR: function (imbalanced) {
+        var A = imbalanced;
+        var B = imbalanced.left;
+        var C = imbalanced.left.right;
+        var newNode = Object.assign({}, C);
+        newNode.left = Object.assign({}, B);
+        newNode.left.right = null;
+        newNode.right = Object.assign({}, A);
+        newNode.right.left = null;
+        return newNode;
     },
     RL: function (imbalanced) {
-        console.log("RLRLRL");
         var A = imbalanced;
         var B = imbalanced.right;
         var C = imbalanced.right.left;
