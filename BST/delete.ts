@@ -3,6 +3,24 @@ const inOrder = require('./inOrder');
 const balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 const findParent = require('./findParent');
 
+const findInorderSuccessor = (function(inOrder) {
+  return function findInorderSuccessor(root, parentValue: number) {
+    let reachedParent = false;
+    let nextOfKin = null;
+    inOrder(root, node => {
+      if (node.value === parentValue) {
+        reachedParent = true;
+        return;
+      }
+      if (reachedParent) {
+        nextOfKin = node;
+      }
+    });
+
+    return nextOfKin;
+  };
+})(inOrder);
+
 type BSTDeleteMethod = (parent: iBST) => void;
 
 const BSTDelete = {
@@ -17,25 +35,17 @@ const BSTDelete = {
   },
 
   deleteNodeWithTwoChildren(parent: iBST) {
-    let reachedParent = false;
-    let nextOfKin = null;
-    inOrder(parent, node => {
-      if (node.value === parent.value) {
-        reachedParent = true;
-        return;
-      }
-      if (reachedParent) {
-        nextOfKin = node;
-      }
-    })(<any>Object).assign(parent, nextOfKin);
+    let nextOfKin = findInorderSuccessor(parent, parent.value);
 
+    // copy the 'nextOfKin' to where the parent is
+    (<any>Object).assign(parent, nextOfKin);
+
+    // remove the nextOfKin from its original position
     let parentOfNextOfKin = findParent(nextOfKin.value);
 
-    if ((parentOfNextOfKin.left.value === nextOfKin.value)) {
-      parentOfNextOfKin.left = null;
-    } else {
-      parentOfNextOfKin.right = null;
-    }
+    parentOfNextOfKin.left.value === nextOfKin.value
+      ? (parentOfNextOfKin.left = null)
+      : (parentOfNextOfKin.right = null);
   },
 };
 
@@ -80,18 +90,18 @@ function generateNodeMeta(root, value): Traits {
   };
 }
 
-function deleteNode(root: iBST, value: number) {
+function _deleteNode(root: iBST, value: number) {
   let nodeMeta = generateNodeMeta(root, value);
   let deleteFn = chooseDeleteMethod(nodeMeta);
   deleteFn(root);
 }
 
 exports = (function(
-  deleteNode: (root: iBST, value: number) => void,
-  balanceIfNecessary: (root: iBST) => void,
+  _deleteNode: (root: iBST, value: number) => void,
+  _balanceIfNecessary: (root: iBST) => void,
 ) {
   return function deleteNode(root: iBST, value: number) {
-    deleteNode(root, value);
-    balanceIfNecessary(root);
+    _deleteNode(root, value);
+    _balanceIfNecessary(root);
   };
-})(deleteNode, balanceIfNecessary);
+})(_deleteNode, balanceIfNecessary);

@@ -2,6 +2,22 @@
 var inOrder = require('./inOrder');
 var balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 var findParent = require('./findParent');
+var findInorderSuccessor = (function (inOrder) {
+    return function findInorderSuccessor(root, parentValue) {
+        var reachedParent = false;
+        var nextOfKin = null;
+        inOrder(root, function (node) {
+            if (node.value === parentValue) {
+                reachedParent = true;
+                return;
+            }
+            if (reachedParent) {
+                nextOfKin = node;
+            }
+        });
+        return nextOfKin;
+    };
+})(inOrder);
 var BSTDelete = {
     deleteLeaf: function (parent) {
         parent.left = parent.right = null;
@@ -12,24 +28,14 @@ var BSTDelete = {
             : (parent.right = parent.right.left || parent.right.right);
     },
     deleteNodeWithTwoChildren: function (parent) {
-        var reachedParent = false;
-        var nextOfKin = null;
-        inOrder(parent, function (node) {
-            if (node.value === parent.value) {
-                reachedParent = true;
-                return;
-            }
-            if (reachedParent) {
-                nextOfKin = node;
-            }
-        })(Object).assign(parent, nextOfKin);
+        var nextOfKin = findInorderSuccessor(parent, parent.value);
+        // copy the 'nextOfKin' to where the parent is
+        Object.assign(parent, nextOfKin);
+        // remove the nextOfKin from its original position
         var parentOfNextOfKin = findParent(nextOfKin.value);
-        if ((parentOfNextOfKin.left.value === nextOfKin.value)) {
-            parentOfNextOfKin.left = null;
-        }
-        else {
-            parentOfNextOfKin.right = null;
-        }
+        parentOfNextOfKin.left.value === nextOfKin.value
+            ? (parentOfNextOfKin.left = null)
+            : (parentOfNextOfKin.right = null);
     },
 };
 function chooseDeleteMethod(_a) {
@@ -64,15 +70,15 @@ function generateNodeMeta(root, value) {
         isOnlyChild: !(parent.left && parent.right),
     };
 }
-function deleteNode(root, value) {
+function _deleteNode(root, value) {
     var nodeMeta = generateNodeMeta(root, value);
     var deleteFn = chooseDeleteMethod(nodeMeta);
     deleteFn(root);
 }
-exports = (function (deleteNode, balanceIfNecessary) {
+exports = (function (_deleteNode, _balanceIfNecessary) {
     return function deleteNode(root, value) {
-        deleteNode(root, value);
-        balanceIfNecessary(root);
+        _deleteNode(root, value);
+        _balanceIfNecessary(root);
     };
-})(deleteNode, balanceIfNecessary);
+})(_deleteNode, balanceIfNecessary);
 //# sourceMappingURL=delete.js.map
