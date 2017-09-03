@@ -36,8 +36,20 @@ var balancingMethods = Object.freeze({
         newNode.right = Object.assign({}, C);
         return newNode;
     },
-    LR: function () { },
-    RL: function () { },
+    LR: function (imbalanced) {
+    },
+    RL: function (imbalanced) {
+        console.log("RLRLRL");
+        var A = imbalanced;
+        var B = imbalanced.right;
+        var C = imbalanced.right.left;
+        var newNode = Object.assign({}, C);
+        newNode.left = Object.assign({}, A);
+        newNode.left.right = null;
+        newNode.right = Object.assign({}, B);
+        newNode.right.left = null;
+        return newNode;
+    },
 });
 var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
     /**

@@ -42,8 +42,24 @@ const balancingMethods = Object.freeze({
     newNode.right = (<any>Object).assign({}, C);
     return newNode;
   },
-  LR() {},
-  RL() {},
+  LR(imbalanced: iBST) {
+
+  },
+  RL(imbalanced: iBST) {
+
+    console.log("RLRLRL");
+
+    let A = imbalanced;
+    let B = imbalanced.right;
+    let C = imbalanced.right.left;
+
+    let newNode = (<any>Object).assign({}, C);
+    newNode.left = (<any>Object).assign({}, A);
+    newNode.left.right = null;
+    newNode.right = (<any>Object).assign({}, B);
+    newNode.right.left = null;
+    return newNode;
+  },
 });
 
 const chooseTreeBalancingMethod = (function(LL, LR, RR, RL) {
