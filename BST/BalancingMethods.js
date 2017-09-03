@@ -99,13 +99,19 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced, findParent, choos
        *
        * @param root {BST}
        */
-    return function (root) {
+    return function balanceIfNecessary(root) {
         // update the balance factor across the tree
         // and look for imbalanced areas
         var imbalancedSubTree = isTreeBalanced(root);
+        if (!imbalancedSubTree) {
+            return;
+        }
         if (imbalancedSubTree) {
             var parent_1 = findParent(root, imbalancedSubTree.value);
             var balanceFn = chooseMethod(imbalancedSubTree);
+            if (typeof balanceFn !== "function") {
+                var c = void 0;
+            }
             var balancedSubTree = balanceFn(imbalancedSubTree);
             if (parent_1.node) {
                 parent_1.fromLeft
@@ -118,8 +124,7 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced, findParent, choos
             }
             // update the heights and balanceFactors
             // in all nodes
-            isTreeBalanced(root);
-            log('root', root);
+            balanceIfNecessary(root);
         }
     };
 })(calculateHeights_1.calculateHeights, findParent_1.findParent, chooseTreeBalancingMethod);
