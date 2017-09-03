@@ -128,10 +128,6 @@ module.exports.balanceIfNecessary = (function(
       let parent = findParent(root, imbalancedSubTree.value);
       let balanceFn = chooseMethod(imbalancedSubTree);
 
-      if(typeof balanceFn !== "function"){
-        let c;
-      }
-
       let balancedSubTree = balanceFn(imbalancedSubTree);
 
       if (parent.node) {

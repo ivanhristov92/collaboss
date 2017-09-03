@@ -109,9 +109,6 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced, findParent, choos
         if (imbalancedSubTree) {
             var parent_1 = findParent(root, imbalancedSubTree.value);
             var balanceFn = chooseMethod(imbalancedSubTree);
-            if (typeof balanceFn !== "function") {
-                var c = void 0;
-            }
             var balancedSubTree = balanceFn(imbalancedSubTree);
             if (parent_1.node) {
                 parent_1.fromLeft
