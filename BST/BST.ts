@@ -17,7 +17,7 @@ export interface iBST {
  * @returns {*}
  * @constructor
  */
-function BST(value: number): iBST {
+export function BST(value: number): iBST {
   return (<any>Object).assign(Object.create(BST.prototype), {
 
     // tree data

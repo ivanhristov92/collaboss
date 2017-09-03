@@ -17,6 +17,7 @@ function BST(value) {
         balanceFactor: 0,
     });
 }
+exports.BST = BST;
 BST.prototype.insert = require('./insert');
 BST.prototype.inOrder = require('./inOrder');
 var bst = BST(1);
