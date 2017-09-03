@@ -7,8 +7,8 @@ export interface iBST {
   heightRight: number,
   balanceFactor: number,
 
-  insert: (number)=>void,
-  inOrder: ()=>void
+  insert: (value: number)=>void,
+  inOrder: (fn?: Function)=>void
 }
 
 /**
