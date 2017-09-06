@@ -197,6 +197,7 @@ function checkIsAVL(node) {
         node.left === undefined ||
         node.right === undefined ||
         node.inOrder === undefined ||
+        node.delete === undefined ||
         node.insert === undefined);
 }
 //

@@ -3,7 +3,8 @@
  */
 const JSC = require("jscheck");
 import{BST, iBST} from "../BST";
-const balanceIfNecessary = require("../BalancingMethods").balanceIfNecessary;
+import { calculateHeights as isTreeBalanced } from '../calculateHeights';
+
 const inOrder  = require("../inOrder");
 
 /**
@@ -20,34 +21,31 @@ JSC.on_lost(console.log);
  * deleting one node after the root
  */
 
-function deleteOne(rootValue: number, leafValue: number) {
-    let bst:iBST = BST(rootValue);
-    bst.insert(leafValue);
+function deleteOne([first, ...values]){
+    let bst = BST(first);
+    values.forEach(val=>bst.insert);
+    let pass = isTreeBalanced(bst) === null;
 
-    if(rootValue < leafValue){
-        return bst.right.value === leafValue;
-    } else if (rootValue > leafValue){
-        return bst.left.value === leafValue;
-    }
-    return bst.left === null && bst.right === null;
+    let nodeValues = arguments[0];
+    let randomIndex = Math.floor(Math.random()*(nodeValues.length-1));
+
+    let pick = nodeValues[randomIndex];
+
+    bst.delete(pick.value);
+
+    return pass;
 }
 
 JSC.test(
-    "BST insert method: (1)",
-    function (verdict, rootValue, leafValue) {
-        return verdict(deleteOne(rootValue, leafValue));
+    "BST delete method: (1)",
+    function (verdict, values) {
+        let ver = deleteOne(values);
+        return verdict(ver);
     },
     [
-        JSC.integer(1000),
-        JSC.integer(1000),
+        JSC.array(Math.ceil(Math.random()*200), JSC.integer(1000))
     ],
-    function (rootValue, leafValue) {
-        if(rootValue < leafValue){
-            return "Right";
-        } else if(rootValue > leafValue){
-            return "Left";
-        } else {
-            return "Equal"
-        }
+    function (values) {
+        return "values";
     }
 );
