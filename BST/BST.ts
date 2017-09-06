@@ -1,3 +1,6 @@
+import inOrder from "./inOrder";
+const _ = require("ramda");
+
 export interface iBST {
   value: number,
   left: iBST | null,
@@ -19,7 +22,8 @@ export interface iBST {
  * @constructor
  */
 export function BST(value: number): iBST {
-  return (<any>Object).assign(Object.create(BST.prototype), {
+
+  let obj = Object.freeze((<any>Object).assign(Object.create(BST.prototype), {
 
     // tree data
     value,
@@ -30,16 +34,13 @@ export function BST(value: number): iBST {
     heightLeft: 0,
     heightRight: 0,
     balanceFactor: 0,
-  });
+  }));
+
+  return Object.freeze(obj)
 }
 
-BST.prototype.insert = require('./insert');
-BST.prototype.inOrder = require('./inOrder');
-BST.prototype.remove = require('./delete');
 
-let bst = BST(1);
-bst.insert(-1);
-bst.insert(2);
-bst.insert(-3);
-bst.insert(4);
-bst.insert(-5);
+
+BST.prototype.insert = require('./insert');
+BST.prototype.inOrder = inOrder;
+BST.prototype.remove = require('./delete');

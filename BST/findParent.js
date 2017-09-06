@@ -2,7 +2,7 @@
 /**
  * Created by Game Station on 3.9.2017 г..
  */
-var inOrder = require('./inOrder');
+var inOrder_1 = require('./inOrder');
 exports.findParent = (function (inorder) {
     /**
        *
@@ -26,7 +26,7 @@ exports.findParent = (function (inorder) {
                 parent.fromRight = true;
             }
         });
-        return parent;
+        return Object.freeze(parent);
     };
-})(inOrder);
+}(inOrder_1.default));
 //# sourceMappingURL=findParent.js.map

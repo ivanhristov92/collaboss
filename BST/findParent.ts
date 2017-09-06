@@ -2,7 +2,7 @@ import { iBST } from './BST';
 /**
  * Created by Game Station on 3.9.2017 г..
  */
-const inOrder = require('./inOrder');
+import inOrder from './inOrder';
 
 export interface iFindParentOutput {
   node: iBST | null;
@@ -12,17 +12,14 @@ export interface iFindParentOutput {
 
 export type iFindParent = (root: iBST, childValue: number) => iFindParentOutput;
 
-export const findParent: iFindParent = (function(inorder: Function) {
+export const findParent = (function(inorder: Function):iFindParent{
   /**
      *
      * @param root {BST|null}
      * @param childValue {number}
      * @returns {{node: BST|null, fromLeft: boolean, fromRight: boolean}}
      */
-  return function findParent(
-    root: iBST,
-    childValue: number,
-  ): iFindParentOutput {
+  return function findParent(root: iBST, childValue: number): iFindParentOutput {
     let parent = {
       node: null,
       fromLeft: false,
@@ -38,6 +35,6 @@ export const findParent: iFindParent = (function(inorder: Function) {
         parent.fromRight = true;
       }
     });
-    return parent;
-  };
-})(inOrder);
+    return Object.freeze(parent);
+  }
+}(inOrder));

@@ -18,6 +18,7 @@
   "homepage": "https://github.com/ivanhristov92/collaboss#readme",
   "dependencies": {
     "@types/node": "^8.0.26",
+    "immutable": "^3.8.1",
     "jscheck": "^0.2.0",
     "ramda": "^0.24.1"
   }

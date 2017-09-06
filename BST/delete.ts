@@ -1,8 +1,8 @@
 import { iBST } from './BST';
 import { arch } from 'os';
-const inOrder = require('./inOrder');
+import inOrder from './inOrder';
 const balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
-const findParent = require('./findParent');
+import {findParent} from './findParent';
 
 // ---------helper----
 // -------------------
@@ -45,11 +45,11 @@ const BSTDelete = {
   deleteNodeWithTwoChildren(parent: iBST) {
     let nextOfKin = findInorderSuccessor(parent, parent.value);
 
+    // remove the nextOfKin from its original position
+    let parentOfNextOfKin = findParent(parent, nextOfKin.value);
+
     // copy the 'nextOfKin' to where the parent is
     (<any>Object).assign(parent, nextOfKin);
-
-    // remove the nextOfKin from its original position
-    let parentOfNextOfKin = findParent(nextOfKin.value);
 
     parentOfNextOfKin.left.value === nextOfKin.value
       ? (parentOfNextOfKin.left = null)
@@ -79,20 +79,37 @@ function findParentAndChild(root: iBST, childValue: number): ParentAndChild {
   };
 
   inOrder(root, node => {
+    if(node.value === childValue){
+      let f;
+    }
+  });
+
+  inOrder(root, node => {
     if (node.left && node.left.value === childValue) {
       toReturn.parent = node;
       toReturn.child = node.left;
     } else if (node.right && node.right.value === childValue) {
       toReturn.parent = node;
       toReturn.child = node.right;
+    } else {
+      let d;
     }
   });
+
+  if(!toReturn.child){
+    console.log("could not delete value ", childValue)
+
+    let c;
+  }
 
   return toReturn;
 }
 
 function generateNodeMeta(root, value): Traits {
   let { parent, child } = findParentAndChild(root, value);
+  if(!child){
+    let c;
+  }
   return {
     isLeaf: !child.left && !child.right,
     isOnlyChild: (parent.left && !parent.right) || (!parent.left && parent.right),

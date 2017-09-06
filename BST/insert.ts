@@ -2,8 +2,8 @@
  * Created by Game Station on 2.9.2017 г..
  */
 const balance = require('./BalancingMethods').balanceIfNecessary;
-const log = require("./utils").log;
 import {iBST} from "./BST";
+import inOrder from "./inOrder";
 
 
 /**
@@ -15,57 +15,62 @@ import {iBST} from "./BST";
  * @private
  */
 interface args{BST:Function, root: iBST, value: number, indentation?: string}
-function _insertNodeInBst({ BST, root, value, indentation = '|-' } : args) {
-
-  log(indentation + `root:(${root.value}), new value:(${value})`);
+function _insertNodeInBst({ BST, root, value} : args): iBST {
 
   if (value < root.value) {
 
     // Go left
 
-    log(indentation + 'go left'); // TODO create a JSC test
-
     if (root.left) {
-      log(indentation + 'a left is found');
-      _insertNodeInBst({
+      let acc = _insertNodeInBst({
         BST,
         root: root.left,
-        value,
-        indentation: indentation + '-',
+        value
       });
+      root = Object.freeze(Object.assign(Object.create(BST.prototype), root, {left: acc} ));
+      return root;
     } else {
-      log(indentation + 'no left value found, inserting');
-      root.left = BST(value);
+      root = Object.freeze(Object.assign(Object.create(BST.prototype), root, {left: BST(value)}));
+      return root;
     }
 
   } else if (value > root.value) {
 
     // Go right
 
-    log(indentation + 'go right'); // TODO create a JSC test
-
     if (root.right) {
-      log(indentation + 'a right is found');
-      _insertNodeInBst({
+      let acc = _insertNodeInBst({
         BST,
         root: root.right,
-        value,
-        indentation: indentation + '-',
+        value
       });
+      root = Object.freeze(Object.assign(Object.create(BST.prototype), root, {right: acc} ));
+      return root;
     } else {
-      log(indentation + 'no right value found, inserting');
-      root.right = BST(value);
+      root = Object.freeze(Object.assign(Object.create(BST.prototype), root, {right: BST(value)}));
+      return root;
     }
+  } else if(value === root.value){
+    return null;
+  } else {
+    throw new Error("bad")
   }
 }
 
 module.exports = ((_insertNode, _balanceIfNecessary) =>
   function insert(value) {
 
-    _insertNode({
+    let inserted: iBST = _insertNode({
       BST: Object.getPrototypeOf(this).constructor,
       root: this,
       value
     });
-    _balanceIfNecessary(this);
+
+    if(inserted){
+      var balanced = _balanceIfNecessary(inserted);
+      return balanced;
+    } else {
+      return this;
+    }
+
   })(_insertNodeInBst, balance);

@@ -2,7 +2,7 @@
  * Created by Game Station on 3.9.2017 г..
  */
 
-import {iBST} from "./BST";
+import {iBST, BST} from "./BST";
 /**
  *
  * @param root {BST}
@@ -11,23 +11,55 @@ import {iBST} from "./BST";
 export function calculateHeights(root: iBST): iBST | null {
   let imbalanced = null;
 
-  (function traverse(root: iBST) {
-    if (root === null) {
+  (function traverse(_root: iBST) {
+    if (_root === null) {
       // * means we reached the end leaves
       // * and are even a step past them
-      return 0;
+      return {
+        node: _root,
+        height: 0
+      };
     }
 
-    root.heightLeft = traverse(root.left);
-    root.heightRight = traverse(root.right);
-    root.balanceFactor = root.heightLeft - root.heightRight;
 
-    if (root.balanceFactor < -1 || root.balanceFactor > 1) {
-        imbalanced = root;
+
+    if(_root == undefined){
+      let h;
     }
 
-    return Math.max(root.heightLeft, root.heightRight) + 1;
+    const BSTproto = Object.getPrototypeOf(_root);
+
+
+    const _left = traverse(_root.left);
+    const left = Object.freeze({
+      heightLeft: _left.height,
+      left: _left.node ? Object.freeze(Object.assign(Object.create(BSTproto),_left.node)) : null
+    });
+    const _right = traverse(_root.right);
+    const right = Object.freeze({
+      heightRight: _right.height,
+      right: _right.node ? Object.freeze(Object.assign(Object.create(BSTproto),_right.node)) : null
+    });
+
+    _root = Object.freeze(Object.assign(Object.create(BSTproto), _root, left, right, {
+      balanceFactor: left.heightLeft - right.heightRight
+    }));
+
+    if (_root.balanceFactor < -1 || _root.balanceFactor > 1) {
+        imbalanced = _root;
+    }
+
+    return Object.freeze({
+      node: _root,
+      height: Math.max(_root.heightLeft, _root.heightRight) + 1
+    });
   })(root);
+
+  if(imbalanced instanceof BST){
+    let da;
+  } else {
+    let ne;
+  }
 
   return imbalanced;
 }

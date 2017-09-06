@@ -1,8 +1,10 @@
+import {version} from "punycode";
 const JSC = require("jscheck");
 import{BST, iBST} from "../BST";
 import { calculateHeights as isTreeBalanced } from '../calculateHeights';
+const _ = require("ramda");
 
-const inOrder  = require("../inOrder");
+import inOrder from "../inOrder";
 
 /**
  * configuration
@@ -20,7 +22,7 @@ JSC.on_lost(console.log);
 
 function insertOne(rootValue: number, leafValue: number) {
     let bst:iBST = BST(rootValue);
-    bst.insert(leafValue);
+    bst = bst.insert(leafValue);
 
     if(rootValue < leafValue){
         return bst.right.value === leafValue;
@@ -65,8 +67,11 @@ function insertTwoLL(rootValue: number, firstValue: number, secondValue: number)
     if(rootValue > firstValue && firstValue > secondValue){
 
         let bst = BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        if(typeof bst.insert !== 'function'){
+            let g;
+        }
+        bst = bst.insert(secondValue);
 
         let nodes = [];
         inOrder(bst, node=>
@@ -111,8 +116,8 @@ function insertTwoRR(rootValue: number, firstValue: number, secondValue: number)
     if(rootValue < firstValue && firstValue < secondValue){
 
         let bst = BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        bst = bst.insert(secondValue);
 
         let nodes = [];
         inOrder(bst, node=>
@@ -152,14 +157,15 @@ JSC.test(
  *
  * inserting two nodes after the root RL-rotation
  */
+
 function insertTwoRL(rootValue: number, firstValue: number, secondValue: number){
 
     // test RL rotation
     if(rootValue < firstValue && firstValue > secondValue){
 
         let bst = BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        bst = bst.insert(secondValue);
 
         let nodes = [];
         inOrder(bst, node=>
@@ -198,14 +204,15 @@ JSC.test(
  *
  * inserting two nodes after the root LR-rotation
  */
+
 function insertTwoLR(rootValue: number, firstValue: number, secondValue: number){
 
     // test LR rotation
     if(rootValue > firstValue && firstValue < secondValue){
 
         let bst = BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        bst = bst.insert(secondValue);
 
         let nodes = [];
         inOrder(bst, node=>
@@ -254,20 +261,37 @@ function checkIsAVL(node){
     node.heightRight === undefined ||
     node.value === undefined ||
     node.left === undefined ||
-    node.right === undefined ||
-    node.inOrder === undefined ||
-    node.remove === undefined ||
-    node.insert === undefined)
+    node.right === undefined
+  )
 }
-//
-function insertMany([first, ...values]){
+
+function insertMany(values){
+
+    let unique = _.uniq(values).sort();
+    let [first, ...rest] = unique;
+
     let bst = BST(first);
-    values.forEach(val=>bst.insert);
+
+    rest.forEach(val=>{
+        bst = bst.insert(val);
+    });
     let pass = isTreeBalanced(bst) === null;
 
     inOrder(bst, node=>{
-        if(!checkIsAVL(node)){pass = false;}
+        if(!checkIsAVL(node)){
+            pass = false;
+        }
     });
+
+    let nodes = [];
+    inOrder(bst, node => {
+       nodes.push(node.value);
+    });
+    nodes = nodes.sort();
+
+    if(nodes.length !== unique.length){
+        pass = false;
+    }
     return pass;
 }
 
@@ -278,9 +302,9 @@ JSC.test(
         return verdict(ver);
     },
     [
-        JSC.array(Math.ceil(Math.random()*200), JSC.integer(1000))
+        JSC.array(Math.ceil(Math.random()*20), JSC.integer(1000))
     ],
     function (values) {
         return "values";
     }
-);
+)

@@ -2,7 +2,8 @@
 var JSC = require("jscheck");
 var BST_1 = require("../BST");
 var calculateHeights_1 = require('../calculateHeights');
-var inOrder = require("../inOrder");
+var _ = require("ramda");
+var inOrder_1 = require("../inOrder");
 /**
  * configuration
  */
@@ -16,7 +17,7 @@ JSC.on_lost(console.log);
  */
 function insertOne(rootValue, leafValue) {
     var bst = BST_1.BST(rootValue);
-    bst.insert(leafValue);
+    bst = bst.insert(leafValue);
     if (rootValue < leafValue) {
         return bst.right.value === leafValue;
     }
@@ -54,10 +55,13 @@ function insertTwoLL(rootValue, firstValue, secondValue) {
     // test LL rotation
     if (rootValue > firstValue && firstValue > secondValue) {
         var bst = BST_1.BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        if (typeof bst.insert !== 'function') {
+            var g = void 0;
+        }
+        bst = bst.insert(secondValue);
         var nodes_1 = [];
-        inOrder(bst, function (node) {
+        inOrder_1.default(bst, function (node) {
             return nodes_1.push(node.value);
         });
         var pass = (bst.value === firstValue);
@@ -88,10 +92,10 @@ function insertTwoRR(rootValue, firstValue, secondValue) {
     // test RR rotation
     if (rootValue < firstValue && firstValue < secondValue) {
         var bst = BST_1.BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        bst = bst.insert(secondValue);
         var nodes_2 = [];
-        inOrder(bst, function (node) {
+        inOrder_1.default(bst, function (node) {
             return nodes_2.push(node.value);
         });
         var pass = (bst.value === firstValue);
@@ -122,10 +126,10 @@ function insertTwoRL(rootValue, firstValue, secondValue) {
     // test RL rotation
     if (rootValue < firstValue && firstValue > secondValue) {
         var bst = BST_1.BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        bst = bst.insert(secondValue);
         var nodes_3 = [];
-        inOrder(bst, function (node) {
+        inOrder_1.default(bst, function (node) {
             return nodes_3.push(node.value);
         });
         var pass = (bst.value === secondValue);
@@ -156,10 +160,10 @@ function insertTwoLR(rootValue, firstValue, secondValue) {
     // test LR rotation
     if (rootValue > firstValue && firstValue < secondValue) {
         var bst = BST_1.BST(rootValue);
-        bst.insert(firstValue);
-        bst.insert(secondValue);
+        bst = bst.insert(firstValue);
+        bst = bst.insert(secondValue);
         var nodes_4 = [];
-        inOrder(bst, function (node) {
+        inOrder_1.default(bst, function (node) {
             return nodes_4.push(node.value);
         });
         var pass = (bst.value === secondValue);
@@ -195,29 +199,36 @@ function checkIsAVL(node) {
         node.heightRight === undefined ||
         node.value === undefined ||
         node.left === undefined ||
-        node.right === undefined ||
-        node.inOrder === undefined ||
-        node.remove === undefined ||
-        node.insert === undefined);
+        node.right === undefined);
 }
-//
-function insertMany(_a) {
-    var first = _a[0], values = _a.slice(1);
+function insertMany(values) {
+    var unique = _.uniq(values).sort();
+    var first = unique[0], rest = unique.slice(1);
     var bst = BST_1.BST(first);
-    values.forEach(function (val) { return bst.insert; });
+    rest.forEach(function (val) {
+        bst = bst.insert(val);
+    });
     var pass = calculateHeights_1.calculateHeights(bst) === null;
-    inOrder(bst, function (node) {
+    inOrder_1.default(bst, function (node) {
         if (!checkIsAVL(node)) {
             pass = false;
         }
     });
+    var nodes = [];
+    inOrder_1.default(bst, function (node) {
+        nodes.push(node.value);
+    });
+    nodes = nodes.sort();
+    if (nodes.length !== unique.length) {
+        pass = false;
+    }
     return pass;
 }
 JSC.test("BST insert method: many", function (verdict, values) {
     var ver = insertMany(values);
     return verdict(ver);
 }, [
-    JSC.array(Math.ceil(Math.random() * 200), JSC.integer(1000))
+    JSC.array(Math.ceil(Math.random() * 20), JSC.integer(1000))
 ], function (values) {
     return "values";
 });

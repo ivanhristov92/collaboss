@@ -1,4 +1,6 @@
 "use strict";
+var inOrder_1 = require("./inOrder");
+var _ = require("ramda");
 /**
  *
  * @param value {number}
@@ -6,7 +8,7 @@
  * @constructor
  */
 function BST(value) {
-    return Object.assign(Object.create(BST.prototype), {
+    var obj = Object.freeze(Object.assign(Object.create(BST.prototype), {
         // tree data
         value: value,
         left: null,
@@ -15,16 +17,11 @@ function BST(value) {
         heightLeft: 0,
         heightRight: 0,
         balanceFactor: 0,
-    });
+    }));
+    return Object.freeze(obj);
 }
 exports.BST = BST;
 BST.prototype.insert = require('./insert');
-BST.prototype.inOrder = require('./inOrder');
+BST.prototype.inOrder = inOrder_1.default;
 BST.prototype.remove = require('./delete');
-var bst = BST(1);
-bst.insert(-1);
-bst.insert(2);
-bst.insert(-3);
-bst.insert(4);
-bst.insert(-5);
 //# sourceMappingURL=BST.js.map

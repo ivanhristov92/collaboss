@@ -1,8 +1,10 @@
 "use strict";
+var BST_1 = require('./BST');
 var calculateHeights_1 = require('./calculateHeights');
 var findParent_1 = require('./findParent');
-var inOrder = require('./inOrder');
 var log = require('./utils').log;
+var newIm = require('./utils').newIm;
+var newImWith = require('./utils').newImWith;
 var balancingMethods = Object.freeze({
     /**
        * Left-Left
@@ -11,51 +13,80 @@ var balancingMethods = Object.freeze({
        * @returns {*}
        */
     LL: function (imbalanced) {
-        var A = imbalanced;
-        var Ar = imbalanced.right;
-        var B = imbalanced.left;
-        var Br = imbalanced.left.right;
-        var C = imbalanced.left.left;
-        var newNode = Object.assign({}, B);
-        newNode.right = Object.assign({}, A);
-        newNode.right.right = Ar ? Object.assign({}, Ar) : null;
-        newNode.right.left = Br ? Object.assign({}, Br) : null;
-        newNode.left = Object.assign({}, C);
+        var proto = Object.getPrototypeOf(imbalanced);
+        var _newIm = function () {
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+        };
+        var A = _newIm(imbalanced);
+        var Ar = imbalanced.right ? _newIm(imbalanced.right) : null;
+        var B = imbalanced.left ? _newIm(imbalanced.left) : null;
+        var Br = imbalanced.left.right ? _newIm(imbalanced.left.right) : null;
+        var C = imbalanced.left.left ? _newIm(imbalanced.left.left) : null;
+        var newNode = _newIm(B);
+        // newNode.right = _newIm(A);
+        newNode = _newIm(newNode, {
+            right: _newIm(A)
+        });
+        // newNode.right.right = Ar ? _newIm(Ar) : null;
+        newNode = _newIm(newNode, {
+            right: _newIm(A, {
+                right: Ar ? _newIm(Ar) : null,
+                left: Br ? _newIm(Br) : null
+            }),
+            left: C ? _newIm(C) : null
+        });
+        // newNode.right.left = Br ? _newIm(Br) : null;
         return newNode;
     },
     RR: function (imbalanced) {
-        var A = imbalanced;
-        var Al = imbalanced.left;
-        var B = imbalanced.right;
-        var Bl = imbalanced.right.left;
-        var C = imbalanced.right.right;
-        var newNode = Object.assign({}, B);
-        newNode.left = Object.assign({}, A);
-        newNode.left.left = Al ? Object.assign({}, Al) : null;
-        newNode.left.right = Bl ? Object.assign({}, Bl) : null;
-        newNode.right = Object.assign({}, C);
+        var proto = Object.getPrototypeOf(imbalanced);
+        var _newIm = function () {
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+        };
+        var A = _newIm(imbalanced);
+        var Al = imbalanced.left ? _newIm(imbalanced.left) : null;
+        var B = imbalanced.right ? _newIm(imbalanced.right) : null;
+        var Bl = imbalanced.right.left ? _newIm(imbalanced.right.left) : null;
+        var C = imbalanced.right.right ? _newIm(imbalanced.right.right) : null;
+        var newNode = _newIm(B, {
+            left: _newIm(A, {
+                left: Al ? _newIm(Al) : null,
+                right: Bl ? _newIm(Bl) : null
+            }),
+            right: C ? _newIm(C) : null
+        });
         return newNode;
     },
     LR: function (imbalanced) {
-        var A = imbalanced;
-        var B = imbalanced.left;
-        var C = imbalanced.left.right;
-        var newNode = Object.assign({}, C);
-        newNode.left = Object.assign({}, B);
-        newNode.left.right = null;
-        newNode.right = Object.assign({}, A);
-        newNode.right.left = null;
+        var proto = Object.getPrototypeOf(imbalanced);
+        var _newIm = function () {
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+        };
+        var A = _newIm(imbalanced);
+        var B = imbalanced.left ? _newIm(imbalanced.left) : null;
+        var C = imbalanced.left.right ? _newIm(imbalanced.left.right) : null;
+        // let newNode = _newIm(C);
+        var newNode = _newIm(C, {
+            left: B ? _newIm(B, { right: null }) : null,
+            right: A ? _newIm(A, { left: null }) : null
+        });
         return newNode;
     },
     RL: function (imbalanced) {
-        var A = imbalanced;
-        var B = imbalanced.right;
-        var C = imbalanced.right.left;
-        var newNode = Object.assign({}, C);
-        newNode.left = Object.assign({}, A);
-        newNode.left.right = null;
-        newNode.right = Object.assign({}, B);
-        newNode.right.left = null;
+        var proto = Object.getPrototypeOf(imbalanced);
+        var _newIm = function () {
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+        };
+        var A = _newIm(imbalanced);
+        var B = imbalanced.right ? _newIm(imbalanced.right) : null;
+        var C = imbalanced.right.left ? _newIm(imbalanced.right.left) : null;
+        // let newNode = _newIm(C);
+        var newNode = _newIm(C, {
+            left: _newIm(A, {
+                right: null
+            }),
+            right: B ? _newIm(B, { left: null }) : null
+        });
         return newNode;
     },
 });
@@ -95,25 +126,32 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
     };
 })(balancingMethods.LL, balancingMethods.LR, balancingMethods.RR, balancingMethods.RL);
 function attachingStrategy(root, parent, balancedSubTree) {
+    var proto = Object.getPrototypeOf(root);
     if (parent.node) {
-        parent.fromLeft
-            ? (parent.node.left = balancedSubTree)
-            : (parent.node.right = balancedSubTree);
+        if (parent.fromLeft) {
+            return Object.freeze(Object.assign(Object.create(proto), parent.node, { left: balancedSubTree }));
+        }
+        else {
+            return Object.freeze(Object.assign(Object.create(proto), parent.node, { right: balancedSubTree }));
+        }
     }
     else {
         // we modified the root node
-        Object.assign(root, balancedSubTree);
+        return Object.freeze(Object.freeze(Object.assign(Object.create(proto), root, balancedSubTree)));
     }
 }
 var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) {
     return function balancingStrategy(root, imbalancedSubTree) {
         var parent = findParent(root, imbalancedSubTree.value);
         var balanceFn = chooseMethod(imbalancedSubTree);
-        if (!balanceFn) {
-            var b = void 0;
-        }
         var balancedSubTree = balanceFn(imbalancedSubTree);
-        attachingStrategy(root, parent, balancedSubTree);
+        var balanced = attachingStrategy(root, parent, balancedSubTree);
+        if (balanced instanceof BST_1.BST) {
+        }
+        else {
+            var ne = void 0;
+        }
+        return balanced;
     };
 })(findParent_1.findParent, chooseTreeBalancingMethod, attachingStrategy);
 module.exports.balanceIfNecessary = (function (isTreeBalanced) {
@@ -126,13 +164,13 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced) {
         // and look for imbalanced areas
         var imbalancedSubTree = isTreeBalanced(root);
         if (!imbalancedSubTree) {
-            return;
+            return root;
         }
-        balancingStrategy(root, imbalancedSubTree);
+        var balanced = balancingStrategy(root, imbalancedSubTree);
         // update the heights and balanceFactors
         // in all nodes
         // re-balance if necessary
-        balanceIfNecessary(root);
+        return balanceIfNecessary(balanced);
     };
 })(calculateHeights_1.calculateHeights);
 //# sourceMappingURL=BalancingMethods.js.map

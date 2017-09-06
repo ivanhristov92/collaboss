@@ -1,7 +1,7 @@
 "use strict";
-var inOrder = require('./inOrder');
+var inOrder_1 = require('./inOrder');
 var balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
-var findParent = require('./findParent');
+var findParent_1 = require('./findParent');
 // ---------helper----
 // -------------------
 var findInorderSuccessor = (function (inOrder) {
@@ -19,7 +19,7 @@ var findInorderSuccessor = (function (inOrder) {
         });
         return nextOfKin;
     };
-})(inOrder);
+})(inOrder_1.default);
 var BSTDelete = {
     deleteLeaf: function (left) { return function (parent) {
         if (left) {
@@ -36,10 +36,10 @@ var BSTDelete = {
     },
     deleteNodeWithTwoChildren: function (parent) {
         var nextOfKin = findInorderSuccessor(parent, parent.value);
+        // remove the nextOfKin from its original position
+        var parentOfNextOfKin = findParent_1.findParent(parent, nextOfKin.value);
         // copy the 'nextOfKin' to where the parent is
         Object.assign(parent, nextOfKin);
-        // remove the nextOfKin from its original position
-        var parentOfNextOfKin = findParent(nextOfKin.value);
         parentOfNextOfKin.left.value === nextOfKin.value
             ? (parentOfNextOfKin.left = null)
             : (parentOfNextOfKin.right = null);
@@ -58,7 +58,12 @@ function findParentAndChild(root, childValue) {
         parent: null,
         child: null,
     };
-    inOrder(root, function (node) {
+    inOrder_1.default(root, function (node) {
+        if (node.value === childValue) {
+            var f = void 0;
+        }
+    });
+    inOrder_1.default(root, function (node) {
         if (node.left && node.left.value === childValue) {
             toReturn.parent = node;
             toReturn.child = node.left;
@@ -67,11 +72,21 @@ function findParentAndChild(root, childValue) {
             toReturn.parent = node;
             toReturn.child = node.right;
         }
+        else {
+            var d = void 0;
+        }
     });
+    if (!toReturn.child) {
+        console.log("could not delete value ", childValue);
+        var c = void 0;
+    }
     return toReturn;
 }
 function generateNodeMeta(root, value) {
     var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
+    if (!child) {
+        var c = void 0;
+    }
     return {
         isLeaf: !child.left && !child.right,
         isOnlyChild: (parent.left && !parent.right) || (!parent.left && parent.right),
