@@ -1,6 +1,7 @@
 const JSC = require("jscheck");
 import{BST, iBST} from "../BST";
-const balanceIfNecessary = require("../BalancingMethods").balanceIfNecessary;
+import { calculateHeights as isTreeBalanced } from '../calculateHeights';
+
 const inOrder  = require("../inOrder");
 
 /**
@@ -261,7 +262,7 @@ function checkIsAVL(node){
 function insertMany([first, ...values]){
     let bst = BST(first);
     values.forEach(val=>bst.insert);
-    let pass = !balanceIfNecessary(bst);
+    let pass = isTreeBalanced(bst) === null;
 
     inOrder(bst, node=>{
         if(!checkIsAVL(node)){pass = false;}
@@ -273,7 +274,7 @@ JSC.test(
     "BST insert method: many",
     function (verdict, values) {
         let ver = insertMany(values);
-        return verdict(true);
+        return verdict(ver);
     },
     [
         JSC.array(Math.ceil(Math.random()*200), JSC.integer(1000))

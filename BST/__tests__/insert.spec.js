@@ -1,7 +1,7 @@
 "use strict";
 var JSC = require("jscheck");
 var BST_1 = require("../BST");
-var balanceIfNecessary = require("../BalancingMethods").balanceIfNecessary;
+var calculateHeights_1 = require('../calculateHeights');
 var inOrder = require("../inOrder");
 /**
  * configuration
@@ -204,7 +204,7 @@ function insertMany(_a) {
     var first = _a[0], values = _a.slice(1);
     var bst = BST_1.BST(first);
     values.forEach(function (val) { return bst.insert; });
-    var pass = !balanceIfNecessary(bst);
+    var pass = calculateHeights_1.calculateHeights(bst) === null;
     inOrder(bst, function (node) {
         if (!checkIsAVL(node)) {
             pass = false;
@@ -214,7 +214,7 @@ function insertMany(_a) {
 }
 JSC.test("BST insert method: many", function (verdict, values) {
     var ver = insertMany(values);
-    return verdict(true);
+    return verdict(ver);
 }, [
     JSC.array(Math.ceil(Math.random() * 200), JSC.integer(1000))
 ], function (values) {
