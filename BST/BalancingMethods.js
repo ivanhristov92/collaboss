@@ -69,7 +69,7 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
         if (!node)
             return null;
         if (node.heightLeft > node.heightRight) {
-            if (node.left.heightLeft > node.left.heightRight) {
+            if (node.left.heightLeft >= node.left.heightRight) {
                 // Left-Left imbalance
                 log('LL');
                 return LL;
@@ -86,7 +86,7 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
                 log('RL');
                 return RL;
             }
-            else if (node.right.heightLeft < node.right.heightRight) {
+            else if (node.right.heightLeft <= node.right.heightRight) {
                 // Right-Right imbalance
                 log('RR');
                 return RR;
@@ -109,6 +109,9 @@ var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) 
     return function balancingStrategy(root, imbalancedSubTree) {
         var parent = findParent(root, imbalancedSubTree.value);
         var balanceFn = chooseMethod(imbalancedSubTree);
+        if (!balanceFn) {
+            var b = void 0;
+        }
         var balancedSubTree = balanceFn(imbalancedSubTree);
         attachingStrategy(root, parent, balancedSubTree);
     };

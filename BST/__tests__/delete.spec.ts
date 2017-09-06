@@ -23,7 +23,7 @@ JSC.on_lost(console.log);
 
 function deleteOne([first, ...values]){
     let bst = BST(first);
-    values.forEach(val=>bst.insert);
+    values.forEach(val => bst.insert(val));
     let pass = isTreeBalanced(bst) === null;
 
     let nodeValues = arguments[0];
@@ -31,7 +31,7 @@ function deleteOne([first, ...values]){
 
     let pick = nodeValues[randomIndex];
 
-    bst.delete(pick.value);
+    bst.remove(pick);
 
     return pass;
 }

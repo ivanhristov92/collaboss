@@ -21,9 +21,14 @@ var findInorderSuccessor = (function (inOrder) {
     };
 })(inOrder);
 var BSTDelete = {
-    deleteLeaf: function (parent) {
-        parent.left = parent.right = null;
-    },
+    deleteLeaf: function (left) { return function (parent) {
+        if (left) {
+            parent.left = null;
+        }
+        else {
+            parent.right = null;
+        }
+    }; },
     deleteNodeWithOneChild: function (parent) {
         parent.left
             ? (parent.left = parent.left.left || parent.left.right)
@@ -41,9 +46,9 @@ var BSTDelete = {
     },
 };
 function chooseDeleteMethod(_a) {
-    var isLeaf = _a.isLeaf, isOnlyChild = _a.isOnlyChild;
+    var isLeaf = _a.isLeaf, isOnlyChild = _a.isOnlyChild, isLeft = _a.isLeft;
     if (isLeaf)
-        return BSTDelete.deleteLeaf;
+        return BSTDelete.deleteLeaf(isLeft);
     if (isOnlyChild)
         return BSTDelete.deleteNodeWithOneChild;
     return BSTDelete.deleteNodeWithTwoChildren;
@@ -69,7 +74,8 @@ function generateNodeMeta(root, value) {
     var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
     return {
         isLeaf: !child.left && !child.right,
-        isOnlyChild: !(parent.left && parent.right),
+        isOnlyChild: (parent.left && !parent.right) || (!parent.left && parent.right),
+        isLeft: (parent.left && parent.left.value === child.value)
     };
 }
 function _deleteNode(root, value) {
@@ -77,10 +83,10 @@ function _deleteNode(root, value) {
     var deleteFn = chooseDeleteMethod(nodeMeta);
     deleteFn(root);
 }
-exports = (function (_deleteNode, _balanceIfNecessary) {
-    return function deleteNode(root, value) {
-        _deleteNode(root, value);
-        _balanceIfNecessary(root);
+module.exports = (function (_deleteNode, _balanceIfNecessary) {
+    return function deleteNode(value) {
+        _deleteNode(this, value);
+        _balanceIfNecessary(this);
     };
 })(_deleteNode, balanceIfNecessary);
 //# sourceMappingURL=delete.js.map

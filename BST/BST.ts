@@ -8,7 +8,7 @@ export interface iBST {
   balanceFactor: number,
 
   insert: (value: number)=>void,
-  delete: (value: number)=>void,
+  remove: (value: number)=>void,
   inOrder: (root:iBST | null, fn?: Function)=>void
 }
 
@@ -35,7 +35,7 @@ export function BST(value: number): iBST {
 
 BST.prototype.insert = require('./insert');
 BST.prototype.inOrder = require('./inOrder');
-BST.prototype.delete = require('./delete');
+BST.prototype.remove = require('./delete');
 
 let bst = BST(1);
 bst.insert(-1);

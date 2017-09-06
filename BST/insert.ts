@@ -61,6 +61,7 @@ function _insertNodeInBst({ BST, root, value, indentation = '|-' } : args) {
 
 module.exports = ((_insertNode, _balanceIfNecessary) =>
   function insert(value) {
+
     _insertNode({
       BST: Object.getPrototypeOf(this).constructor,
       root: this,

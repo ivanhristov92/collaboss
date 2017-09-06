@@ -1,4 +1,5 @@
 import { iBST } from './BST';
+import { arch } from 'os';
 const inOrder = require('./inOrder');
 const balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 const findParent = require('./findParent');
@@ -24,12 +25,15 @@ const findInorderSuccessor = (function(inOrder) {
 })(inOrder);
 // -------------------
 
-
 type BSTDeleteMethod = (parent: iBST) => void;
 
 const BSTDelete = {
-  deleteLeaf(parent: iBST) {
-    parent.left = parent.right = null;
+  deleteLeaf: (left)=>(parent: iBST) => {
+    if(left){
+      parent.left = null;
+    } else {
+      parent.right = null;
+    }
   },
 
   deleteNodeWithOneChild(parent: iBST) {
@@ -54,11 +58,12 @@ const BSTDelete = {
 };
 
 type Traits = {
-  isLeaf: boolean;
-  isOnlyChild: boolean;
+  isLeaf: boolean,
+  isOnlyChild: boolean,
+  isLeft: boolean
 };
-function chooseDeleteMethod({ isLeaf, isOnlyChild }: Traits): BSTDeleteMethod {
-  if (isLeaf) return BSTDelete.deleteLeaf;
+function chooseDeleteMethod({ isLeaf, isOnlyChild, isLeft }: Traits): BSTDeleteMethod {
+  if (isLeaf) return BSTDelete.deleteLeaf(isLeft);
   if (isOnlyChild) return BSTDelete.deleteNodeWithOneChild;
   return BSTDelete.deleteNodeWithTwoChildren;
 }
@@ -90,7 +95,8 @@ function generateNodeMeta(root, value): Traits {
   let { parent, child } = findParentAndChild(root, value);
   return {
     isLeaf: !child.left && !child.right,
-    isOnlyChild: !(parent.left && parent.right),
+    isOnlyChild: (parent.left && !parent.right) || (!parent.left && parent.right),
+    isLeft: (parent.left && parent.left.value === child.value)
   };
 }
 
@@ -100,12 +106,11 @@ function _deleteNode(root: iBST, value: number) {
   deleteFn(root);
 }
 
-exports = (function(
+module.exports = ((
   _deleteNode: (root: iBST, value: number) => void,
   _balanceIfNecessary: (root: iBST) => void,
-) {
-  return function deleteNode(root: iBST, value: number) {
-    _deleteNode(root, value);
-    _balanceIfNecessary(root);
-  };
-})(_deleteNode, balanceIfNecessary);
+) =>
+  function deleteNode(value: number) {
+    _deleteNode(this, value);
+    _balanceIfNecessary(this);
+  })(_deleteNode, balanceIfNecessary);
