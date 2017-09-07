@@ -162,15 +162,16 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced) {
     return function balanceIfNecessary(root) {
         // update the balance factor across the tree
         // and look for imbalanced areas
-        var imbalancedSubTree = isTreeBalanced(root);
-        if (!imbalancedSubTree) {
-            return root;
+        var isBalanced = isTreeBalanced(root);
+        if (isBalanced.balanced) {
+            var _root = isBalanced.root;
+            return _root;
         }
-        var balanced = balancingStrategy(root, imbalancedSubTree);
+        var balancedSubTree = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode);
         // update the heights and balanceFactors
         // in all nodes
         // re-balance if necessary
-        return balanceIfNecessary(balanced);
+        return balanceIfNecessary(balancedSubTree);
     };
 })(calculateHeights_1.calculateHeights);
 //# sourceMappingURL=BalancingMethods.js.map

@@ -3,14 +3,13 @@
  */
 "use strict";
 var BST_1 = require("./BST");
-/**
- *
- * @param root {BST}
- * @returns {BST|null} - only returns BST if it is unbalanced
- */
 function calculateHeights(root) {
-    var imbalanced = null;
-    (function traverse(_root) {
+    var isBalanced = {
+        balanced: true,
+        imbalancedNode: null,
+        root: root
+    };
+    var node = (function traverse(_root) {
         if (_root === null) {
             // * means we reached the end leaves
             // * and are even a step past them
@@ -37,20 +36,27 @@ function calculateHeights(root) {
             balanceFactor: left.heightLeft - right.heightRight
         }));
         if (_root.balanceFactor < -1 || _root.balanceFactor > 1) {
-            imbalanced = _root;
+            if (isBalanced.balanced) {
+                // if we've already located an imbalanced
+                // subtree, it must have been closer to the leafs,
+                // so we do not replace it
+                isBalanced.imbalancedNode = _root;
+                isBalanced.balanced = false;
+            }
         }
         return Object.freeze({
             node: _root,
             height: Math.max(_root.heightLeft, _root.heightRight) + 1
         });
-    })(root);
-    if (imbalanced instanceof BST_1.BST) {
+    })(root).node;
+    if (isBalanced.imbalancedNode instanceof BST_1.BST) {
         var da = void 0;
     }
     else {
         var ne = void 0;
     }
-    return imbalanced;
+    isBalanced.root = node;
+    return isBalanced;
 }
 exports.calculateHeights = calculateHeights;
 //# sourceMappingURL=calculateHeights.js.map

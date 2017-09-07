@@ -1,6 +1,6 @@
 import {iBST, SBT, BST} from './BST';
 
-import { calculateHeights } from './calculateHeights';
+import { calculateHeights, calculateHeightsOutput } from './calculateHeights';
 import { findParent, iFindParent, iFindParentOutput } from './findParent';
 
 import inOrder from './inOrder';
@@ -194,7 +194,7 @@ const balancingStrategy = (function(
 })(findParent, chooseTreeBalancingMethod, attachingStrategy);
 
 module.exports.balanceIfNecessary = (function(
-  isTreeBalanced: (root: iBST) => iBST | null,
+  isTreeBalanced: (root: iBST) => calculateHeightsOutput,
 ) {
   /**
      *
@@ -203,17 +203,18 @@ module.exports.balanceIfNecessary = (function(
   return function balanceIfNecessary(root: iBST) :iBST | null {
     // update the balance factor across the tree
     // and look for imbalanced areas
-    let imbalancedSubTree = isTreeBalanced(root);
+    let isBalanced: calculateHeightsOutput = isTreeBalanced(root);
 
-    if (!imbalancedSubTree) {
-      return root;
+    if (isBalanced.balanced) {
+      var _root = isBalanced.root;
+      return _root;
     }
 
-    const balanced = balancingStrategy(root, imbalancedSubTree);
+    const balancedSubTree = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode);
 
     // update the heights and balanceFactors
     // in all nodes
     // re-balance if necessary
-    return balanceIfNecessary(balanced);
+    return balanceIfNecessary(balancedSubTree);
   };
 })(calculateHeights);

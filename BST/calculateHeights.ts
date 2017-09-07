@@ -8,10 +8,22 @@ import {iBST, BST} from "./BST";
  * @param root {BST}
  * @returns {BST|null} - only returns BST if it is unbalanced
  */
-export function calculateHeights(root: iBST): iBST | null {
-  let imbalanced = null;
 
-  (function traverse(_root: iBST) {
+export type calculateHeightsOutput = {
+  balanced: boolean,
+  root: iBST | null,
+  imbalancedNode: iBST | null,
+
+};
+
+export function calculateHeights(root: iBST): calculateHeightsOutput {
+  let isBalanced = {
+    balanced: true,
+    imbalancedNode: null,
+    root: root
+  };
+
+  let {node} = (function traverse(_root: iBST) {
     if (_root === null) {
       // * means we reached the end leaves
       // * and are even a step past them
@@ -46,7 +58,13 @@ export function calculateHeights(root: iBST): iBST | null {
     }));
 
     if (_root.balanceFactor < -1 || _root.balanceFactor > 1) {
-        imbalanced = _root;
+        if(isBalanced.balanced){
+          // if we've already located an imbalanced
+          // subtree, it must have been closer to the leafs,
+          // so we do not replace it
+          isBalanced.imbalancedNode = _root;
+          isBalanced.balanced = false;
+        }
     }
 
     return Object.freeze({
@@ -55,11 +73,12 @@ export function calculateHeights(root: iBST): iBST | null {
     });
   })(root);
 
-  if(imbalanced instanceof BST){
+  if(isBalanced.imbalancedNode instanceof BST){
     let da;
   } else {
     let ne;
   }
 
-  return imbalanced;
+  isBalanced.root = node;
+  return isBalanced;
 }
