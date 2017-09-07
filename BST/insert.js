@@ -3,6 +3,8 @@
  * Created by Game Station on 2.9.2017 г..
  */
 var balance = require('./BalancingMethods').balanceIfNecessary;
+var inOrder_1 = require("./inOrder");
+var _ = require("ramda");
 function _insertNodeInBst(_a) {
     var BST = _a.BST, root = _a.root, value = _a.value;
     if (value < root.value) {
@@ -61,6 +63,8 @@ function find(root, value) {
 }
 module.exports = (function (_insertNode, _balanceIfNecessary) {
     return function insert(value) {
+        var before = [];
+        inOrder_1.default(this, function (node) { return before.push(node.value); });
         var inserted = _insertNode({
             BST: Object.getPrototypeOf(this).constructor,
             root: this,
@@ -95,6 +99,11 @@ module.exports = (function (_insertNode, _balanceIfNecessary) {
             }
             if (!_find || !_find2) {
                 var d = void 0;
+            }
+            var after_1 = [];
+            inOrder_1.default(balanced, function (node) { return after_1.push(node.value); });
+            if (_.uniq(before).length !== _.uniq(after_1).length - 1) {
+                var c = void 0;
             }
             return balanced;
         }

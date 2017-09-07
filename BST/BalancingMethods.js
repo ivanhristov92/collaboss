@@ -47,12 +47,20 @@ var balancingMethods = Object.freeze({
         var B = imbalanced.right ? _newIm(imbalanced.right) : null;
         var Bl = imbalanced.right.left ? _newIm(imbalanced.right.left) : null;
         var C = imbalanced.right.right ? _newIm(imbalanced.right.right) : null;
+        var Cl = imbalanced.right.right.left ? _newIm(imbalanced.right.right.left) : null;
+        var Cr = imbalanced.right.right.right ? _newIm(imbalanced.right.right.right) : null;
+        if (!A || !B || !C) {
+            throw new Error("kofti");
+        }
         var newNode = _newIm(B, {
             left: _newIm(A, {
                 left: Al ? _newIm(Al) : null,
                 right: Bl ? _newIm(Bl) : null
             }),
-            right: C ? _newIm(C) : null
+            right: C ? _newIm(C, {
+                left: Cl ? _newIm(Cl) : null,
+                right: Cr ? _newIm(Cr) : null
+            }) : null
         });
         return newNode;
     },

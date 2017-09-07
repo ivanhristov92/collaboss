@@ -229,11 +229,12 @@ function insertMany(values) {
             pass = false;
         }
         else {
-            added[val] = true;
+            added[val] = bst;
         }
     });
     Object.keys(added).forEach(function (val) {
-        var found = find(bst, val);
+        var k = Number(val);
+        var found = find(bst, k);
         if (!found) {
             var c = void 0;
         }

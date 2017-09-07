@@ -5,6 +5,7 @@ import {calculateHeights} from "./calculateHeights";
 const balance = require('./BalancingMethods').balanceIfNecessary;
 import {iBST} from "./BST";
 import inOrder from "./inOrder";
+const _ = require("ramda");
 
 
 /**
@@ -78,6 +79,9 @@ function find(root, value){
 module.exports = ((_insertNode, _balanceIfNecessary) =>
   function insert(value) {
 
+  let before = [];
+  inOrder(this, node=>before.push(node.value));
+
     let inserted: iBST = _insertNode({
       BST: Object.getPrototypeOf(this).constructor,
       root: this,
@@ -119,6 +123,14 @@ module.exports = ((_insertNode, _balanceIfNecessary) =>
       }
       if(!_find || !_find2){
         let d;
+      }
+
+
+      let after = [];
+      inOrder(balanced, node=>after.push(node.value));
+
+      if(_.uniq(before).length !== _.uniq(after).length-1){
+        let c;
       }
 
       return balanced;

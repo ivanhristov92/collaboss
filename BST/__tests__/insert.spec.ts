@@ -302,12 +302,13 @@ function insertMany(values){
         if(!_find){
             pass = false;
         } else {
-            added[val] = true;
+            added[val] = bst;
         }
     });
 
     Object.keys(added).forEach(val=>{
-        let found = find(bst, val);
+       let k = Number(val)
+        let found = find(bst, k);
         if(!found){
             let c;
         }
