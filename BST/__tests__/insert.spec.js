@@ -201,14 +201,44 @@ function checkIsAVL(node) {
         node.left === undefined ||
         node.right === undefined);
 }
+function find(root, value) {
+    return (function traverse(_root) {
+        if (_root === null) {
+            return null;
+        }
+        var a = traverse(_root.left);
+        if (a) {
+            return a;
+        }
+        if (_root.value === value) {
+            return _root;
+        }
+        return traverse(_root.right);
+    }(root));
+}
 function insertMany(values) {
     var unique = _.uniq(values).sort();
     var first = unique[0], rest = unique.slice(1);
     var bst = BST_1.BST(first);
+    var pass = true;
+    var added = {};
     rest.forEach(function (val) {
         bst = bst.insert(val);
+        var _find = find(bst, val);
+        if (!_find) {
+            pass = false;
+        }
+        else {
+            added[val] = true;
+        }
     });
-    var pass = calculateHeights_1.calculateHeights(bst) === null;
+    Object.keys(added).forEach(function (val) {
+        var found = find(bst, val);
+        if (!found) {
+            var c = void 0;
+        }
+    });
+    pass = calculateHeights_1.calculateHeights(bst) === null;
     inOrder_1.default(bst, function (node) {
         if (!checkIsAVL(node)) {
             pass = false;

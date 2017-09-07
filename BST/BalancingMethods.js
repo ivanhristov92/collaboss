@@ -1,5 +1,4 @@
 "use strict";
-var BST_1 = require('./BST');
 var calculateHeights_1 = require('./calculateHeights');
 var findParent_1 = require('./findParent');
 var log = require('./utils').log;
@@ -65,10 +64,17 @@ var balancingMethods = Object.freeze({
         var A = _newIm(imbalanced);
         var B = imbalanced.left ? _newIm(imbalanced.left) : null;
         var C = imbalanced.left.right ? _newIm(imbalanced.left.right) : null;
+        var Cl = imbalanced.left.right.left ? _newIm(imbalanced.left.right.left) : null;
+        var Cr = imbalanced.left.right.right ? _newIm(imbalanced.left.right.right) : null;
+        if (!A || !B || !C) {
+            throw new Error("kofti");
+        }
         // let newNode = _newIm(C);
         var newNode = _newIm(C, {
-            left: B ? _newIm(B, { right: null }) : null,
-            right: A ? _newIm(A, { left: null }) : null
+            left: newIm(B, {
+                right: Cl ? _newIm(Cl) : (Cr ? _newIm(Cr) : null)
+            }),
+            right: newIm(A, { left: null })
         });
         return newNode;
     },
@@ -80,12 +86,19 @@ var balancingMethods = Object.freeze({
         var A = _newIm(imbalanced);
         var B = imbalanced.right ? _newIm(imbalanced.right) : null;
         var C = imbalanced.right.left ? _newIm(imbalanced.right.left) : null;
+        var Cl = imbalanced.right.left.left ? _newIm(imbalanced.right.left.left) : null;
+        var Cr = imbalanced.right.left.right ? _newIm(imbalanced.right.left.right) : null;
+        if (!A || !B || !C) {
+            throw new Error("kofti");
+        }
         // let newNode = _newIm(C);
         var newNode = _newIm(C, {
             left: _newIm(A, {
                 right: null
             }),
-            right: B ? _newIm(B, { left: null }) : null
+            right: B ? _newIm(B, {
+                left: Cl ? _newIm(Cl) : (Cr ? _newIm(Cr) : null)
+            }) : null
         });
         return newNode;
     },
@@ -100,7 +113,7 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
         if (!node)
             return null;
         if (node.heightLeft > node.heightRight) {
-            if (node.left.heightLeft >= node.left.heightRight) {
+            if (node.left.heightLeft > node.left.heightRight) {
                 // Left-Left imbalance
                 log('LL');
                 return LL;
@@ -117,7 +130,7 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
                 log('RL');
                 return RL;
             }
-            else if (node.right.heightLeft <= node.right.heightRight) {
+            else if (node.right.heightLeft < node.right.heightRight) {
                 // Right-Right imbalance
                 log('RR');
                 return RR;
@@ -144,14 +157,18 @@ var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) 
     return function balancingStrategy(root, imbalancedSubTree) {
         var parent = findParent(root, imbalancedSubTree.value);
         var balanceFn = chooseMethod(imbalancedSubTree);
-        var balancedSubTree = balanceFn(imbalancedSubTree);
-        var balanced = attachingStrategy(root, parent, balancedSubTree);
-        if (balanced instanceof BST_1.BST) {
+        if (!parent) {
+            var f = void 0;
         }
-        else {
-            var ne = void 0;
-        }
-        return balanced;
+        return {
+            parent: parent,
+            fn: balanceFn,
+            apply: function () {
+                var balancedSubTree = balanceFn(imbalancedSubTree);
+                var balanced = attachingStrategy(root, parent, balancedSubTree);
+                return { balanced: balanced, balancedSubTree: balancedSubTree, imbalancedSubTree: imbalancedSubTree };
+            }
+        };
     };
 })(findParent_1.findParent, chooseTreeBalancingMethod, attachingStrategy);
 module.exports.balanceIfNecessary = (function (isTreeBalanced) {
@@ -165,13 +182,20 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced) {
         var isBalanced = isTreeBalanced(root);
         if (isBalanced.balanced) {
             var _root = isBalanced.root;
-            return _root;
+            // return _root;
+            return { root: _root, fn: null };
         }
-        var balancedSubTree = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode);
+        // const balancedSubTree = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode});
+        var strategy = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode);
+        var b = strategy.apply();
+        var balanced = b.balanced;
+        var imbalancedSubTree = b.imbalancedSubTree;
+        var balancedSubTree = b.balancedSubTree;
+        return { root: balanced, balancedSubTree: balancedSubTree, fn: strategy.fn, parent: strategy.parent.node, imbalancedSubTree: imbalancedSubTree };
         // update the heights and balanceFactors
         // in all nodes
         // re-balance if necessary
-        return balanceIfNecessary(balancedSubTree);
+        return balanceIfNecessary(balanced);
     };
 })(calculateHeights_1.calculateHeights);
 //# sourceMappingURL=BalancingMethods.js.map

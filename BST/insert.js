@@ -44,6 +44,21 @@ function _insertNodeInBst(_a) {
         throw new Error("bad");
     }
 }
+function find(root, value) {
+    return (function traverse(_root) {
+        if (_root === null) {
+            return null;
+        }
+        var a = traverse(_root.left);
+        if (a) {
+            return a;
+        }
+        if (_root.value === value) {
+            return _root;
+        }
+        return traverse(_root.right);
+    }(root));
+}
 module.exports = (function (_insertNode, _balanceIfNecessary) {
     return function insert(value) {
         var inserted = _insertNode({
@@ -52,7 +67,35 @@ module.exports = (function (_insertNode, _balanceIfNecessary) {
             value: value
         });
         if (inserted) {
-            var balanced = _balanceIfNecessary(inserted);
+            var _find = find(inserted, value);
+            // var balanced = calculateHeights(inserted).root;
+            var _balanced = _balanceIfNecessary(inserted);
+            var balanced = _balanced.root;
+            var _find2 = find(balanced, value);
+            if (_balanced.parent) {
+                var _find3 = find(_balanced.parent, value);
+                if (!_find3) {
+                    var a = void 0;
+                }
+            }
+            if (_balanced.balancedSubTree) {
+                var _find4 = find(_balanced.balancedSubTree, value);
+                if (!_find4) {
+                    var a = void 0;
+                }
+            }
+            if (_balanced.balanced) {
+                var _find5 = find(_balanced.balanced, value);
+                if (!_find5) {
+                    var a = void 0;
+                }
+                else {
+                    var b = void 0;
+                }
+            }
+            if (!_find || !_find2) {
+                var d = void 0;
+            }
             return balanced;
         }
         else {

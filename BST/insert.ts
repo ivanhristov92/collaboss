@@ -1,3 +1,4 @@
+import {calculateHeights} from "./calculateHeights";
 /**
  * Created by Game Station on 2.9.2017 г..
  */
@@ -57,6 +58,23 @@ function _insertNodeInBst({ BST, root, value} : args): iBST {
   }
 }
 
+function find(root, value){
+  return (function traverse(_root){
+    if(_root === null){
+      return null;
+    }
+
+
+    let a = traverse(_root.left);
+    if(a){return a}
+    if(_root.value === value){
+      return _root;
+    }
+    return traverse(_root.right);
+
+  }(root))
+}
+
 module.exports = ((_insertNode, _balanceIfNecessary) =>
   function insert(value) {
 
@@ -66,8 +84,43 @@ module.exports = ((_insertNode, _balanceIfNecessary) =>
       value
     });
 
+
     if(inserted){
-      var balanced = _balanceIfNecessary(inserted);
+
+      var _find = find(inserted, value);
+
+      // var balanced = calculateHeights(inserted).root;
+
+      var _balanced = _balanceIfNecessary(inserted);
+      var balanced = _balanced.root;
+
+      var _find2 = find(balanced, value);
+
+      if(_balanced.parent){
+        var _find3 = find(_balanced.parent, value);
+        if(!_find3){
+          let a;
+        }
+      }
+      if(_balanced.balancedSubTree){
+        var _find4 = find(_balanced.balancedSubTree, value);
+        if(!_find4 ){
+          let a;
+        }
+      }
+
+      if(_balanced.balanced){
+        var _find5 = find(_balanced.balanced, value);
+        if(!_find5){
+          let a;
+        } else {
+          let b;
+        }
+      }
+      if(!_find || !_find2){
+        let d;
+      }
+
       return balanced;
     } else {
       return this;

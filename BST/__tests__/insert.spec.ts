@@ -265,6 +265,26 @@ function checkIsAVL(node){
   )
 }
 
+
+
+function find(root, value){
+    return (function traverse(_root){
+        if(_root === null){
+            return null;
+        }
+
+
+        let a = traverse(_root.left);
+        if(a){return a}
+        if(_root.value === value){
+            return _root;
+        }
+        return traverse(_root.right);
+
+    }(root))
+}
+
+
 function insertMany(values){
 
     let unique = _.uniq(values).sort();
@@ -272,10 +292,28 @@ function insertMany(values){
 
     let bst = BST(first);
 
+    let pass = true;
+
+    let added = {};
+
     rest.forEach(val=>{
         bst = bst.insert(val);
+        let _find = find(bst, val);
+        if(!_find){
+            pass = false;
+        } else {
+            added[val] = true;
+        }
     });
-    let pass = isTreeBalanced(bst) === null;
+
+    Object.keys(added).forEach(val=>{
+        let found = find(bst, val);
+        if(!found){
+            let c;
+        }
+    })
+
+    pass = isTreeBalanced(bst) === null;
 
     inOrder(bst, node=>{
         if(!checkIsAVL(node)){
