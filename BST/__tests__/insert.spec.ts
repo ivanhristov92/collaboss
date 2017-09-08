@@ -294,27 +294,46 @@ function insertMany(values){
 
     let pass = true;
 
-    let added = {};
+    let added = [];
+    let order = [];
+    let ordered = [];
 
-    rest.forEach(val=>{
-        bst = bst.insert(val);
-        let _find = find(bst, val);
-        if(!_find){
-            pass = false;
-        } else {
-            added[val] = bst;
+    rest.forEach((val, i)=>{
+        let isAdded = bst.insert(val);
+        if(isAdded){
+
+            bst = isAdded;
+            let _find = find(bst, val);
+            if(!_find){
+                pass = false;
+            } else {
+                added[val] = bst;
+                order[val] = i;
+                ordered[order.length] = bst;
+            }
+
+            Object.keys(added).forEach(val=>{
+                let k = Number(val)
+                let found = find(bst, k);
+                if(!found){
+                    let c;
+                }
+            })
         }
+
     });
 
-    Object.keys(added).forEach(val=>{
-       let k = Number(val)
-        let found = find(bst, k);
-        if(!found){
-            let c;
-        }
-    })
+    // Object.keys(added).forEach(val=>{
+    //    let k = Number(val)
+    //     let found = find(bst, k);
+    //     if(!found){
+    //         let c;
+    //     }
+    // })
 
-    pass = isTreeBalanced(bst) === null;
+    if(isTreeBalanced(bst) !== null){
+        pass = false;
+    };
 
     inOrder(bst, node=>{
         if(!checkIsAVL(node)){

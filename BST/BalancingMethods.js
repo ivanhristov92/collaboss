@@ -147,13 +147,16 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
     };
 })(balancingMethods.LL, balancingMethods.LR, balancingMethods.RR, balancingMethods.RL);
 function attachingStrategy(root, parent, balancedSubTree) {
+    var toAttach = null;
     var proto = Object.getPrototypeOf(root);
     if (parent.node) {
         if (parent.fromLeft) {
-            return Object.freeze(Object.assign(Object.create(proto), parent.node, { left: balancedSubTree }));
+            // toAttach = Object.freeze(Object.assign(Object.create(proto), parent.node, {left: balancedSubTree}));
+            Object.freeze(Object.assign(parent.node, { left: balancedSubTree }));
         }
         else {
-            return Object.freeze(Object.assign(Object.create(proto), parent.node, { right: balancedSubTree }));
+            // toAttach = Object.freeze(Object.assign(Object.create(proto), parent.node, {right: balancedSubTree}));
+            toAttach = Object.freeze(Object.assign(parent.node, { right: balancedSubTree }));
         }
     }
     else {
@@ -165,7 +168,7 @@ var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) 
     return function balancingStrategy(root, imbalancedSubTree) {
         var parent = findParent(root, imbalancedSubTree.value);
         var balanceFn = chooseMethod(imbalancedSubTree);
-        if (!parent) {
+        if (!parent.node && root.value !== imbalancedSubTree.value) {
             var f = void 0;
         }
         return {
@@ -174,6 +177,9 @@ var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) 
             apply: function () {
                 var balancedSubTree = balanceFn(imbalancedSubTree);
                 var balanced = attachingStrategy(root, parent, balancedSubTree);
+                if (parent.node && parent.node.value) {
+                    var g = void 0;
+                }
                 return { balanced: balanced, balancedSubTree: balancedSubTree, imbalancedSubTree: imbalancedSubTree };
             }
         };

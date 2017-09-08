@@ -221,25 +221,42 @@ function insertMany(values) {
     var first = unique[0], rest = unique.slice(1);
     var bst = BST_1.BST(first);
     var pass = true;
-    var added = {};
-    rest.forEach(function (val) {
-        bst = bst.insert(val);
-        var _find = find(bst, val);
-        if (!_find) {
-            pass = false;
-        }
-        else {
-            added[val] = bst;
+    var added = [];
+    var order = [];
+    var ordered = [];
+    rest.forEach(function (val, i) {
+        var isAdded = bst.insert(val);
+        if (isAdded) {
+            bst = isAdded;
+            var _find = find(bst, val);
+            if (!_find) {
+                pass = false;
+            }
+            else {
+                added[val] = bst;
+                order[val] = i;
+                ordered[order.length] = bst;
+            }
+            Object.keys(added).forEach(function (val) {
+                var k = Number(val);
+                var found = find(bst, k);
+                if (!found) {
+                    var c = void 0;
+                }
+            });
         }
     });
-    Object.keys(added).forEach(function (val) {
-        var k = Number(val);
-        var found = find(bst, k);
-        if (!found) {
-            var c = void 0;
-        }
-    });
-    pass = calculateHeights_1.calculateHeights(bst) === null;
+    // Object.keys(added).forEach(val=>{
+    //    let k = Number(val)
+    //     let found = find(bst, k);
+    //     if(!found){
+    //         let c;
+    //     }
+    // })
+    if (calculateHeights_1.calculateHeights(bst) !== null) {
+        pass = false;
+    }
+    ;
     inOrder_1.default(bst, function (node) {
         if (!checkIsAVL(node)) {
             pass = false;

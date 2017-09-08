@@ -182,17 +182,23 @@ function attachingStrategy(
   parent: iFindParentOutput,
   balancedSubTree: iBST,
 ) {
+
+  let toAttach = null;
+
   const proto = Object.getPrototypeOf(root);
   if (parent.node) {
     if(parent.fromLeft){
-      return Object.freeze(Object.assign(Object.create(proto), parent.node, {left: balancedSubTree}));
+      // toAttach = Object.freeze(Object.assign(Object.create(proto), parent.node, {left: balancedSubTree}));
+      Object.freeze(Object.assign( parent.node, {left: balancedSubTree}));
     } else {
-      return Object.freeze(Object.assign(Object.create(proto), parent.node, {right: balancedSubTree}));
+      // toAttach = Object.freeze(Object.assign(Object.create(proto), parent.node, {right: balancedSubTree}));
+      toAttach = Object.freeze(Object.assign(parent.node, {right: balancedSubTree}));
     }
   } else {
     // we modified the root node
     return Object.freeze(Object.freeze(Object.assign(Object.create(proto), root, balancedSubTree)));
   }
+
 }
 
 const balancingStrategy = (function(
@@ -208,7 +214,7 @@ const balancingStrategy = (function(
     let parent = findParent(root, imbalancedSubTree.value);
     let balanceFn = chooseMethod(imbalancedSubTree);
 
-    if(!parent){
+    if(!parent.node && root.value !== imbalancedSubTree.value){
       let f;
     }
 
@@ -218,6 +224,9 @@ const balancingStrategy = (function(
       apply(){
         let balancedSubTree = balanceFn(imbalancedSubTree);
         let balanced = attachingStrategy(root, parent, balancedSubTree);
+        if(parent.node && parent.node.value){
+          let g;
+        }
         return {balanced, balancedSubTree, imbalancedSubTree};
       }
     }
