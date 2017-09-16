@@ -24,15 +24,15 @@ var balancingMethods = Object.freeze({
         var newNode = _newIm(B);
         // newNode.right = _newIm(A);
         newNode = _newIm(newNode, {
-            right: _newIm(A)
+            right: _newIm(A),
         });
         // newNode.right.right = Ar ? _newIm(Ar) : null;
         newNode = _newIm(newNode, {
             right: _newIm(A, {
                 right: Ar ? _newIm(Ar) : null,
-                left: Br ? _newIm(Br) : null
+                left: Br ? _newIm(Br) : null,
             }),
-            left: C ? _newIm(C) : null
+            left: C ? _newIm(C) : null,
         });
         // newNode.right.left = Br ? _newIm(Br) : null;
         return newNode;
@@ -47,20 +47,26 @@ var balancingMethods = Object.freeze({
         var B = imbalanced.right ? _newIm(imbalanced.right) : null;
         var Bl = imbalanced.right.left ? _newIm(imbalanced.right.left) : null;
         var C = imbalanced.right.right ? _newIm(imbalanced.right.right) : null;
-        var Cl = imbalanced.right.right.left ? _newIm(imbalanced.right.right.left) : null;
-        var Cr = imbalanced.right.right.right ? _newIm(imbalanced.right.right.right) : null;
+        var Cl = imbalanced.right.right.left
+            ? _newIm(imbalanced.right.right.left)
+            : null;
+        var Cr = imbalanced.right.right.right
+            ? _newIm(imbalanced.right.right.right)
+            : null;
         if (!A || !B || !C) {
-            throw new Error("kofti");
+            throw new Error('kofti');
         }
         var newNode = _newIm(B, {
             left: _newIm(A, {
                 left: Al ? _newIm(Al) : null,
-                right: Bl ? _newIm(Bl) : null
+                right: Bl ? _newIm(Bl) : null,
             }),
-            right: C ? _newIm(C, {
-                left: Cl ? _newIm(Cl) : null,
-                right: Cr ? _newIm(Cr) : null
-            }) : null
+            right: C
+                ? _newIm(C, {
+                    left: Cl ? _newIm(Cl) : null,
+                    right: Cr ? _newIm(Cr) : null,
+                })
+                : null,
         });
         return newNode;
     },
@@ -72,17 +78,21 @@ var balancingMethods = Object.freeze({
         var A = _newIm(imbalanced);
         var B = imbalanced.left ? _newIm(imbalanced.left) : null;
         var C = imbalanced.left.right ? _newIm(imbalanced.left.right) : null;
-        var Cl = imbalanced.left.right.left ? _newIm(imbalanced.left.right.left) : null;
-        var Cr = imbalanced.left.right.right ? _newIm(imbalanced.left.right.right) : null;
+        var Cl = imbalanced.left.right.left
+            ? _newIm(imbalanced.left.right.left)
+            : null;
+        var Cr = imbalanced.left.right.right
+            ? _newIm(imbalanced.left.right.right)
+            : null;
         if (!A || !B || !C) {
-            throw new Error("kofti");
+            throw new Error('kofti');
         }
         // let newNode = _newIm(C);
         var newNode = _newIm(C, {
             left: newIm(B, {
-                right: Cl ? _newIm(Cl) : (Cr ? _newIm(Cr) : null)
+                right: Cl ? _newIm(Cl) : Cr ? _newIm(Cr) : null,
             }),
-            right: newIm(A, { left: null })
+            right: newIm(A, { left: null }),
         });
         return newNode;
     },
@@ -94,19 +104,25 @@ var balancingMethods = Object.freeze({
         var A = _newIm(imbalanced);
         var B = imbalanced.right ? _newIm(imbalanced.right) : null;
         var C = imbalanced.right.left ? _newIm(imbalanced.right.left) : null;
-        var Cl = imbalanced.right.left.left ? _newIm(imbalanced.right.left.left) : null;
-        var Cr = imbalanced.right.left.right ? _newIm(imbalanced.right.left.right) : null;
+        var Cl = imbalanced.right.left.left
+            ? _newIm(imbalanced.right.left.left)
+            : null;
+        var Cr = imbalanced.right.left.right
+            ? _newIm(imbalanced.right.left.right)
+            : null;
         if (!A || !B || !C) {
-            throw new Error("kofti");
+            throw new Error('kofti');
         }
         // let newNode = _newIm(C);
         var newNode = _newIm(C, {
             left: _newIm(A, {
-                right: null
+                right: null,
             }),
-            right: B ? _newIm(B, {
-                left: Cl ? _newIm(Cl) : (Cr ? _newIm(Cr) : null)
-            }) : null
+            right: B
+                ? _newIm(B, {
+                    left: Cl ? _newIm(Cl) : Cr ? _newIm(Cr) : null,
+                })
+                : null,
         });
         return newNode;
     },
@@ -147,22 +163,37 @@ var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {
     };
 })(balancingMethods.LL, balancingMethods.LR, balancingMethods.RR, balancingMethods.RL);
 function attachingStrategy(root, parent, balancedSubTree) {
-    var toAttach = null;
     var proto = Object.getPrototypeOf(root);
-    if (parent.node) {
-        if (parent.fromLeft) {
-            // toAttach = Object.freeze(Object.assign(Object.create(proto), parent.node, {left: balancedSubTree}));
-            Object.freeze(Object.assign(parent.node, { left: balancedSubTree }));
-        }
-        else {
-            // toAttach = Object.freeze(Object.assign(Object.create(proto), parent.node, {right: balancedSubTree}));
-            toAttach = Object.freeze(Object.assign(parent.node, { right: balancedSubTree }));
-        }
+    if (!parent.node) {
+        // we are at root
+        return Object.freeze(Object.assign(Object.create(proto), root, balancedSubTree));
     }
-    else {
-        // we modified the root node
-        return Object.freeze(Object.freeze(Object.assign(Object.create(proto), root, balancedSubTree)));
-    }
+    return (function fromParentUp(_a) {
+        var _root = _a._root, parentValue = _a.parentValue;
+        if (_root.value === parentValue) {
+            // we found the parent
+            // now attach
+            return Object.freeze(Object.assign(Object.create(proto), _root, {
+                left: parent.fromLeft ? balancedSubTree : _root.left,
+                right: parent.fromRight ? balancedSubTree : _root.right,
+            }));
+        }
+        var child = fromParentUp({
+            _root: _root.value > parentValue ? _root.left : _root.right,
+            parentValue: parentValue,
+        });
+        // after we've found the parent
+        // and attached the balanced subtree
+        if (_root.value > parentValue) {
+            return Object.freeze(Object.assign(Object.create(proto), _root, { left: child }));
+        }
+        else if (_root.value < parentValue) {
+            return Object.freeze(Object.assign(Object.create(proto), _root, { right: child }));
+        }
+    })({
+        _root: root,
+        parentValue: parent.node.value,
+    });
 }
 var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) {
     return function balancingStrategy(root, imbalancedSubTree) {
@@ -181,7 +212,7 @@ var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) 
                     var g = void 0;
                 }
                 return { balanced: balanced, balancedSubTree: balancedSubTree, imbalancedSubTree: imbalancedSubTree };
-            }
+            },
         };
     };
 })(findParent_1.findParent, chooseTreeBalancingMethod, attachingStrategy);
@@ -195,21 +226,15 @@ module.exports.balanceIfNecessary = (function (isTreeBalanced) {
         // and look for imbalanced areas
         var isBalanced = isTreeBalanced(root);
         if (isBalanced.balanced) {
-            var _root = isBalanced.root;
-            // return _root;
-            return { root: _root, fn: null };
+            return { root: isBalanced.root, balanced: true };
         }
         // const balancedSubTree = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode});
         var strategy = balancingStrategy(isBalanced.root, isBalanced.imbalancedNode);
-        var b = strategy.apply();
-        var balanced = b.balanced;
-        var imbalancedSubTree = b.imbalancedSubTree;
-        var balancedSubTree = b.balancedSubTree;
-        return { root: balanced, balancedSubTree: balancedSubTree, fn: strategy.fn, parent: strategy.parent.node, imbalancedSubTree: imbalancedSubTree };
+        var balancedTree = strategy.apply().balanced;
         // update the heights and balanceFactors
         // in all nodes
         // re-balance if necessary
-        return balanceIfNecessary(balanced);
+        return balanceIfNecessary(balancedTree);
     };
 })(calculateHeights_1.calculateHeights);
 //# sourceMappingURL=BalancingMethods.js.map

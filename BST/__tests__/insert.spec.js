@@ -253,7 +253,7 @@ function insertMany(values) {
     //         let c;
     //     }
     // })
-    if (calculateHeights_1.calculateHeights(bst) !== null) {
+    if (calculateHeights_1.calculateHeights(bst).balanced !== true) {
         pass = false;
     }
     ;

@@ -1,32 +1,31 @@
 "use strict";
-/**
- * Created by Game Station on 3.9.2017 г..
- */
-var inOrder_1 = require('./inOrder');
-exports.findParent = (function (inorder) {
-    /**
-       *
-       * @param root {BST|null}
-       * @param childValue {number}
-       * @returns {{node: BST|null, fromLeft: boolean, fromRight: boolean}}
-       */
-    return function findParent(root, childValue) {
-        var parent = {
-            node: null,
-            fromLeft: false,
-            fromRight: false,
-        };
-        inorder(root, function (current) {
-            if (current.left && current.left.value === childValue) {
-                parent.node = current;
-                parent.fromLeft = true;
-            }
-            else if (current.right && current.right.value === childValue) {
-                parent.node = current;
-                parent.fromRight = true;
-            }
-        });
-        return Object.freeze(parent);
+function findParent(root, childValue) {
+    var parent = {
+        node: null,
+        fromLeft: false,
+        fromRight: false,
     };
-}(inOrder_1.default));
+    if (root.value === childValue) {
+        return parent;
+    }
+    if (root.value > childValue) {
+        // go left
+        if (root.left && root.left.value === childValue) {
+            parent.node = root;
+            parent.fromLeft = true;
+            return Object.freeze(parent);
+        }
+        return findParent(root.left, childValue);
+    }
+    else if (root.value < childValue) {
+        // go right
+        if (root.right && root.right.value === childValue) {
+            parent.node = root;
+            parent.fromRight = true;
+            return Object.freeze(parent);
+        }
+        return findParent(root.right, childValue);
+    }
+}
+exports.findParent = findParent;
 //# sourceMappingURL=findParent.js.map

@@ -331,7 +331,7 @@ function insertMany(values){
     //     }
     // })
 
-    if(isTreeBalanced(bst) !== null){
+    if(isTreeBalanced(bst).balanced !== true){
         pass = false;
     };
 

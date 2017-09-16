@@ -51,6 +51,9 @@ function find(root, value) {
         if (_root === null) {
             return null;
         }
+        if (_root === undefined) {
+            var g = void 0;
+        }
         var a = traverse(_root.left);
         if (a) {
             return a;
@@ -89,7 +92,7 @@ module.exports = (function (_insertNode, _balanceIfNecessary) {
                 }
             }
             if (_balanced.balanced) {
-                var _find5 = find(_balanced.balanced, value);
+                var _find5 = find(balanced, value);
                 if (!_find5) {
                     var a = void 0;
                 }
