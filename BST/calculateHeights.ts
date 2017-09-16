@@ -40,15 +40,15 @@ export function calculateHeights(root: iBST): calculateHeightsOutput {
     const _left = traverse(_root.left);
     const left = Object.freeze({
       heightLeft: _left.height,
-      left: _left.node ? Object.freeze(Object.assign(Object.create(BSTproto),_left.node)) : null
+      left: _left.node ? Object.freeze((<any>Object).assign(Object.create(BSTproto),_left.node)) : null
     });
     const _right = traverse(_root.right);
     const right = Object.freeze({
       heightRight: _right.height,
-      right: _right.node ? Object.freeze(Object.assign(Object.create(BSTproto),_right.node)) : null
+      right: _right.node ? Object.freeze((<any>Object).assign(Object.create(BSTproto),_right.node)) : null
     });
 
-    _root = Object.freeze(Object.assign(Object.create(BSTproto), _root, left, right, {
+    _root = Object.freeze((<any>Object).assign(Object.create(BSTproto), _root, left, right, {
       balanceFactor: left.heightLeft - right.heightRight
     }));
 

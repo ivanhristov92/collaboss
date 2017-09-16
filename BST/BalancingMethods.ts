@@ -27,12 +27,10 @@ const balancingMethods = Object.freeze({
     let Br = imbalanced.left.right ? _newIm(imbalanced.left.right) : null;
     let C = imbalanced.left.left ? _newIm(imbalanced.left.left) : null;
     let newNode = _newIm(B);
-    // newNode.right = _newIm(A);
     newNode = _newIm(newNode, {
       right: _newIm(A),
     });
 
-    // newNode.right.right = Ar ? _newIm(Ar) : null;
     newNode = _newIm(newNode, {
       right: _newIm(A, {
         right: Ar ? _newIm(Ar) : null,
@@ -40,7 +38,6 @@ const balancingMethods = Object.freeze({
       }),
       left: C ? _newIm(C) : null,
     });
-    // newNode.right.left = Br ? _newIm(Br) : null;
     return newNode;
   },
   RR(imbalanced: iBST) {
@@ -136,7 +133,6 @@ const balancingMethods = Object.freeze({
       throw new Error('kofti');
     }
 
-    // let newNode = _newIm(C);
     return _newIm(C, {
       left: _newIm(A, {
         right: null,
