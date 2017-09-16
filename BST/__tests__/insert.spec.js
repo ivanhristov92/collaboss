@@ -246,13 +246,6 @@ function insertMany(values) {
             });
         }
     });
-    // Object.keys(added).forEach(val=>{
-    //    let k = Number(val)
-    //     let found = find(bst, k);
-    //     if(!found){
-    //         let c;
-    //     }
-    // })
     if (calculateHeights_1.calculateHeights(bst).balanced !== true) {
         pass = false;
     }

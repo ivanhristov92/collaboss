@@ -262,24 +262,17 @@ const balancingStrategy = (function(
   return function balancingStrategy(
     root: iBST,
     imbalancedSubTree: iBST,
-  ): iBST | null {
+  ): {apply: ()=>{balanced:iBST | null}} {
+
     let parent = findParent(root, imbalancedSubTree.value);
     let balanceFn = chooseMethod(imbalancedSubTree);
 
-    if (!parent.node && root.value !== imbalancedSubTree.value) {
-      let f;
-    }
 
     return {
-      parent: parent,
-      fn: balanceFn,
       apply() {
         let balancedSubTree = balanceFn(imbalancedSubTree);
         let balanced = attachingStrategy(root, parent, balancedSubTree);
-        if (parent.node && parent.node.value) {
-          let g;
-        }
-        return { balanced, balancedSubTree, imbalancedSubTree };
+        return {balanced};
       },
     };
   };
@@ -292,7 +285,7 @@ module.exports.balanceIfNecessary = (function(
      *
      * @param root {BST}
      */
-  return function balanceIfNecessary(root: iBST): iBST | null {
+  return function balanceIfNecessary(root: iBST): {root: iBST | null, balanced: boolean} {
     // update the balance factor across the tree
     // and look for imbalanced areas
     let isBalanced: calculateHeightsOutput = isTreeBalanced(root);

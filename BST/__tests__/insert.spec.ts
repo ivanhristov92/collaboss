@@ -323,13 +323,6 @@ function insertMany(values){
 
     });
 
-    // Object.keys(added).forEach(val=>{
-    //    let k = Number(val)
-    //     let found = find(bst, k);
-    //     if(!found){
-    //         let c;
-    //     }
-    // })
 
     if(isTreeBalanced(bst).balanced !== true){
         pass = false;
