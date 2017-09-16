@@ -3,18 +3,20 @@ var calculateHeights_1 = require('./calculateHeights');
 var findParent_1 = require('./findParent');
 var log = require('./utils').log;
 var newIm = require('./utils').newIm;
-var newImWith = require('./utils').newImWith;
 var balancingMethods = Object.freeze({
     /**
        * Left-Left
-       * @param root {BST}
        * @param imbalanced {BST|null}
        * @returns {*}
        */
     LL: function (imbalanced) {
         var proto = Object.getPrototypeOf(imbalanced);
         var _newIm = function () {
-            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
         var A = _newIm(imbalanced);
         var Ar = imbalanced.right ? _newIm(imbalanced.right) : null;
@@ -40,7 +42,11 @@ var balancingMethods = Object.freeze({
     RR: function (imbalanced) {
         var proto = Object.getPrototypeOf(imbalanced);
         var _newIm = function () {
-            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
         var A = _newIm(imbalanced);
         var Al = imbalanced.left ? _newIm(imbalanced.left) : null;
@@ -56,7 +62,7 @@ var balancingMethods = Object.freeze({
         if (!A || !B || !C) {
             throw new Error('kofti');
         }
-        var newNode = _newIm(B, {
+        return _newIm(B, {
             left: _newIm(A, {
                 left: Al ? _newIm(Al) : null,
                 right: Bl ? _newIm(Bl) : null,
@@ -68,12 +74,15 @@ var balancingMethods = Object.freeze({
                 })
                 : null,
         });
-        return newNode;
     },
     LR: function (imbalanced) {
         var proto = Object.getPrototypeOf(imbalanced);
         var _newIm = function () {
-            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
         var A = _newIm(imbalanced);
         var B = imbalanced.left ? _newIm(imbalanced.left) : null;
@@ -88,18 +97,21 @@ var balancingMethods = Object.freeze({
             throw new Error('kofti');
         }
         // let newNode = _newIm(C);
-        var newNode = _newIm(C, {
+        return _newIm(C, {
             left: newIm(B, {
                 right: Cl ? _newIm(Cl) : Cr ? _newIm(Cr) : null,
             }),
             right: newIm(A, { left: null }),
         });
-        return newNode;
     },
     RL: function (imbalanced) {
         var proto = Object.getPrototypeOf(imbalanced);
         var _newIm = function () {
-            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, arguments)));
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
         var A = _newIm(imbalanced);
         var B = imbalanced.right ? _newIm(imbalanced.right) : null;
@@ -114,7 +126,7 @@ var balancingMethods = Object.freeze({
             throw new Error('kofti');
         }
         // let newNode = _newIm(C);
-        var newNode = _newIm(C, {
+        return _newIm(C, {
             left: _newIm(A, {
                 right: null,
             }),
@@ -124,7 +136,6 @@ var balancingMethods = Object.freeze({
                 })
                 : null,
         });
-        return newNode;
     },
 });
 var chooseTreeBalancingMethod = (function (LL, LR, RR, RL) {

@@ -18,9 +18,6 @@ function calculateHeights(root) {
                 height: 0
             };
         }
-        if (_root == undefined) {
-            var h = void 0;
-        }
         var BSTproto = Object.getPrototypeOf(_root);
         var _left = traverse(_root.left);
         var left = Object.freeze({

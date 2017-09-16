@@ -1,26 +1,23 @@
-import { iBST, SBT, BST } from './BST';
+import { iBST, BST } from './BST';
 
 import { calculateHeights, calculateHeightsOutput } from './calculateHeights';
-import { findParent, iFindParent, iFindParentOutput } from './findParent';
+import { findParent, iFindParentOutput } from './findParent';
 
-import inOrder from './inOrder';
 const log = require('./utils').log;
 const newIm = require('./utils').newIm;
-const newImWith = require('./utils').newImWith;
 
 const balancingMethods = Object.freeze({
   /**
      * Left-Left
-     * @param root {BST}
      * @param imbalanced {BST|null}
      * @returns {*}
      */
   LL(imbalanced: iBST) {
     let proto = Object.getPrototypeOf(imbalanced);
 
-    const _newIm = function() {
+    const _newIm = function(...args : any[]) {
       return Object.freeze(
-        Object.assign(Object.create(proto), newIm(...arguments)),
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
       );
     };
 
@@ -49,9 +46,9 @@ const balancingMethods = Object.freeze({
   RR(imbalanced: iBST) {
     let proto = Object.getPrototypeOf(imbalanced);
 
-    const _newIm = function() {
+    const _newIm = function(...args : any[]) {
       return Object.freeze(
-        Object.assign(Object.create(proto), newIm(...arguments)),
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
       );
     };
 
@@ -71,7 +68,7 @@ const balancingMethods = Object.freeze({
       throw new Error('kofti');
     }
 
-    let newNode = _newIm(B, {
+    return _newIm(B, {
       left: _newIm(A, {
         left: Al ? _newIm(Al) : null,
         right: Bl ? _newIm(Bl) : null,
@@ -83,14 +80,13 @@ const balancingMethods = Object.freeze({
           })
         : null,
     });
-    return newNode;
   },
   LR(imbalanced: iBST) {
     let proto = Object.getPrototypeOf(imbalanced);
 
-    const _newIm = function() {
+    const _newIm = function(...args : any[]) {
       return Object.freeze(
-        Object.assign(Object.create(proto), newIm(...arguments)),
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
       );
     };
 
@@ -110,21 +106,19 @@ const balancingMethods = Object.freeze({
     }
 
     // let newNode = _newIm(C);
-    let newNode = _newIm(C, {
+    return _newIm(C, {
       left: newIm(B, {
         right: Cl ? _newIm(Cl) : Cr ? _newIm(Cr) : null,
       }),
       right: newIm(A, { left: null }),
     });
-
-    return newNode;
   },
   RL(imbalanced: iBST) {
     let proto = Object.getPrototypeOf(imbalanced);
 
-    const _newIm = function() {
+    const _newIm = function(...args : any[]) {
       return Object.freeze(
-        Object.assign(Object.create(proto), newIm(...arguments)),
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
       );
     };
 
@@ -143,7 +137,7 @@ const balancingMethods = Object.freeze({
     }
 
     // let newNode = _newIm(C);
-    let newNode = _newIm(C, {
+    return _newIm(C, {
       left: _newIm(A, {
         right: null,
       }),
@@ -153,7 +147,6 @@ const balancingMethods = Object.freeze({
           })
         : null,
     });
-    return newNode;
   },
 });
 
@@ -205,7 +198,7 @@ function attachingStrategy(
   if (!parent.node) {
     // we are at root
     return Object.freeze(
-      Object.assign(Object.create(proto), root, balancedSubTree),
+        (<any>Object).assign(Object.create(proto), root, balancedSubTree),
     );
   }
 
@@ -220,7 +213,7 @@ function attachingStrategy(
       // we found the parent
       // now attach
       return Object.freeze(
-        Object.assign(Object.create(proto), _root, {
+          (<any>Object).assign(Object.create(proto), _root, {
           left: parent.fromLeft ? balancedSubTree : _root.left,
           right: parent.fromRight ? balancedSubTree : _root.right,
         }),
@@ -237,11 +230,11 @@ function attachingStrategy(
 
     if ( _root.value > parentValue) {
       return Object.freeze(
-        Object.assign(Object.create(proto), _root, { left: child }),
+          (<any>Object).assign(Object.create(proto), _root, { left: child }),
       );
     } else if (_root.value < parentValue) {
       return Object.freeze(
-        Object.assign(Object.create(proto), _root, { right: child }),
+          (<any>Object).assign(Object.create(proto), _root, { right: child }),
       );
     }
   })({

@@ -9,6 +9,7 @@ import {iBST, BST} from "./BST";
  * @returns {BST|null} - only returns BST if it is unbalanced
  */
 
+
 export type calculateHeightsOutput = {
   balanced: boolean,
   root: iBST | null,
@@ -34,13 +35,7 @@ export function calculateHeights(root: iBST): calculateHeightsOutput {
     }
 
 
-
-    if(_root == undefined){
-      let h;
-    }
-
     const BSTproto = Object.getPrototypeOf(_root);
-
 
     const _left = traverse(_root.left);
     const left = Object.freeze({
