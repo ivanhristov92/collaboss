@@ -4,8 +4,6 @@ import {calculateHeights} from "./calculateHeights";
  */
 const balance = require('./BalancingMethods').balanceIfNecessary;
 import {iBST} from "./BST";
-import inOrder from "./inOrder";
-const _ = require("ramda");
 
 
 /**
@@ -59,85 +57,15 @@ function _insertNodeInBst({ BST, root, value} : args): iBST {
   }
 }
 
-function find(root, value){
-  return (function traverse(_root){
-    if(_root === null){
-      return null;
-    }
-
-    if(_root === undefined){
-      let g;
-    }
-    let a = traverse(_root.left);
-    if(a){return a}
-    if(_root.value === value){
-      return _root;
-    }
-    return traverse(_root.right);
-
-  }(root))
-}
-
 module.exports = ((_insertNode, _balanceIfNecessary) =>
   function insert(value) {
 
-  let before = [];
-  inOrder(this, node=>before.push(node.value));
-
-    let inserted: iBST = _insertNode({
+    let inserted: iBST | null = _insertNode({
       BST: Object.getPrototypeOf(this).constructor,
       root: this,
       value
     });
 
-
-    if(inserted){
-
-      var _find = find(inserted, value);
-
-      // var balanced = calculateHeights(inserted).root;
-
-      var _balanced = _balanceIfNecessary(inserted);
-      var balanced = _balanced.root;
-
-      var _find2 = find(balanced, value);
-
-      if(_balanced.parent){
-        var _find3 = find(_balanced.parent, value);
-        if(!_find3){
-          let a;
-        }
-      }
-      if(_balanced.balancedSubTree){
-        var _find4 = find(_balanced.balancedSubTree, value);
-        if(!_find4 ){
-          let a;
-        }
-      }
-
-      if(_balanced.balanced){
-        var _find5 = find(balanced, value);
-        if(!_find5){
-          let a;
-        } else {
-          let b;
-        }
-      }
-      if(!_find || !_find2){
-        let d;
-      }
-
-
-      let after = [];
-      inOrder(balanced, node=>after.push(node.value));
-
-      if(_.uniq(before).length !== _.uniq(after).length-1){
-        let c;
-      }
-
-      return balanced;
-    } else {
-      return this;
-    }
+    return inserted ? _balanceIfNecessary(inserted).root : this;
 
   })(_insertNodeInBst, balance);

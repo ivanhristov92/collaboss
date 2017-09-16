@@ -192,7 +192,7 @@ const chooseTreeBalancingMethod = (function(LL, LR, RR, RL) {
   balancingMethods.LL,
   balancingMethods.LR,
   balancingMethods.RR,
-  balancingMethods.RL,
+  balancingMethods.RL
 );
 
 function attachingStrategy(

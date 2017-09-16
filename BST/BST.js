@@ -8,7 +8,7 @@ var _ = require("ramda");
  * @constructor
  */
 function BST(value) {
-    var obj = Object.freeze(Object.assign(Object.create(BST.prototype), {
+    return Object.freeze(Object.assign(Object.create(BST.prototype), {
         // tree data
         value: value,
         left: null,
@@ -18,7 +18,6 @@ function BST(value) {
         heightRight: 0,
         balanceFactor: 0,
     }));
-    return Object.freeze(obj);
 }
 exports.BST = BST;
 BST.prototype.insert = require('./insert');

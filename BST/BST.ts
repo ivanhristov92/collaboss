@@ -23,7 +23,7 @@ export interface iBST {
  */
 export function BST(value: number): iBST {
 
-  let obj = Object.freeze((<any>Object).assign(Object.create(BST.prototype), {
+  return Object.freeze((<any>Object).assign(Object.create(BST.prototype), {
 
     // tree data
     value,
@@ -35,8 +35,6 @@ export function BST(value: number): iBST {
     heightRight: 0,
     balanceFactor: 0,
   }));
-
-  return Object.freeze(obj)
 }
 
 
