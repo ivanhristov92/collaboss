@@ -19,6 +19,9 @@ export function findParent(root: iBST, childValue: number): iFindParentOutput {
     fromRight: false,
   };
 
+  if(root === null){
+    let c;
+  }
   if (root.value === childValue) {
     return parent;
   }

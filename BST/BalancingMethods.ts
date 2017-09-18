@@ -255,8 +255,9 @@ const balancingStrategy = (function(
 
     let parent = findParent(root, imbalancedSubTree.value);
     let balanceFn = chooseMethod(imbalancedSubTree);
-
-
+      if(typeof balanceFn !== "function"){
+        let g;
+      }
     return {
       apply() {
         let balancedSubTree = balanceFn(imbalancedSubTree);

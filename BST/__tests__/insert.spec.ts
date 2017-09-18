@@ -304,7 +304,7 @@ function insertMany(values){
 
             bst = isAdded;
             let _find = find(bst, val);
-            if(!_find){
+            if(_find === null){
                 pass = false;
             } else {
                 added[val] = bst;
@@ -353,7 +353,7 @@ JSC.test(
         return verdict(ver);
     },
     [
-        JSC.array(Math.ceil(Math.random()*20), JSC.integer(1000))
+        JSC.array(Math.ceil(Math.random()*40), JSC.integer(-1000, 1000))
     ],
     function (values) {
         return "values";

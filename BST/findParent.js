@@ -5,6 +5,9 @@ function findParent(root, childValue) {
         fromLeft: false,
         fromRight: false,
     };
+    if (root === null) {
+        var c = void 0;
+    }
     if (root.value === childValue) {
         return parent;
     }

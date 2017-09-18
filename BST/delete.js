@@ -24,7 +24,7 @@ function findInorderSuccessorOf(root, value) {
 }
 var BSTDelete = {
     deleteLeaf: function (isLeft) { return function (root, value) {
-        var proto = Object.getPrototypeOf(parent);
+        var proto = Object.getPrototypeOf(root);
         var _newIm = function () {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
@@ -89,7 +89,7 @@ var BSTDelete = {
         return deleted ? deleted.node : null;
     }; },
     deleteNodeWithOneChild: function (root, value) {
-        var proto = Object.getPrototypeOf(parent);
+        var proto = Object.getPrototypeOf(root);
         var _newIm = function () {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
@@ -256,11 +256,19 @@ function findParentAndChild(root, childValue) {
         else if (result) {
             return result;
         }
-        throw new Error('kvo stava tuk');
+        else {
+            var a = {
+                root: root,
+                childValue: childValue
+            };
+            var h = void 0;
+        }
+        //throw new Error('kvo stava tuk');
     })(root, childValue);
 }
 function generateNodeMeta(root, value) {
-    var _a = findParentAndChild(root, value), parent = _a.parent, target = _a.child;
+    var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
+    var target = child;
     return {
         isLeaf: !target.left && !target.right,
         hasOneChild: !!(target.left && !target.right) || !!(!target.left && target.right),

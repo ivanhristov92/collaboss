@@ -44,7 +44,7 @@ type BSTDelete = {
 
 const BSTDelete: BSTDelete = {
   deleteLeaf: (isLeft: boolean) => (root: iBST, value: number) => {
-    let proto = Object.getPrototypeOf(parent);
+    let proto = Object.getPrototypeOf(root);
     const _newIm = function(...args: any[]) {
       return Object.freeze(
         (<any>Object).assign(Object.create(proto), newIm(...args)),
@@ -112,7 +112,7 @@ const BSTDelete: BSTDelete = {
   },
 
   deleteNodeWithOneChild(root: iBST, value: number) {
-    let proto = Object.getPrototypeOf(parent);
+    let proto = Object.getPrototypeOf(root);
     const _newIm = function(...args: any[]) {
       return Object.freeze(
         (<any>Object).assign(Object.create(proto), newIm(...args)),
@@ -308,15 +308,21 @@ function findParentAndChild(root: iBST, childValue: number): ParentAndChild {
       };
     } else if (result) {
       return result;
+    } else {
+      let a = {
+        root,
+        childValue
+      }
+      let h;
     }
 
-    throw new Error('kvo stava tuk');
+    //throw new Error('kvo stava tuk');
   })(root, childValue);
 }
 
 function generateNodeMeta(root, value): Traits {
-  let { parent, child: target } = findParentAndChild(root, value);
-
+  let { parent, child } = findParentAndChild(root, value);
+  let target = child;
   return {
     isLeaf: !target.left && !target.right,
     hasOneChild:

@@ -21,12 +21,38 @@ JSC.on_lost(console.log);
  * deleting one node after the root
  */
 
+
+function find(root, value){
+    return (function traverse(_root){
+        if(_root === null){
+            return null;
+        }
+
+
+        let a = traverse(_root.left);
+        if(a){return a}
+        if(_root.value === value){
+            return _root;
+        }
+        return traverse(_root.right);
+
+    }(root))
+}
+
+
+
 function deleteOne([first, ...values]){
     let bst = BST(first);
     values.forEach(val => {
-        let isAdded = bst.insert(val);
-        if(isAdded){
-            bst = isAdded
+        var before = bst;
+        let after = bst.insert(val);
+        if(after){
+            bst = after;
+            let found = find(bst, val);
+            if(!found){
+                let g;
+            }
+
         }
     });
     let pass = isTreeBalanced(bst).balanced === true;

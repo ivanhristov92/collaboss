@@ -229,7 +229,7 @@ function insertMany(values) {
         if (isAdded) {
             bst = isAdded;
             var _find = find(bst, val);
-            if (!_find) {
+            if (_find === null) {
                 pass = false;
             }
             else {
@@ -269,7 +269,7 @@ JSC.test("BST insert method: many", function (verdict, values) {
     var ver = insertMany(values);
     return verdict(ver);
 }, [
-    JSC.array(Math.ceil(Math.random() * 20), JSC.integer(1000))
+    JSC.array(Math.ceil(Math.random() * 40), JSC.integer(-1000, 1000))
 ], function (values) {
     return "values";
 });
