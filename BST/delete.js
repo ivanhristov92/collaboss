@@ -1,26 +1,14 @@
 "use strict";
-var inOrder_1 = require('./inOrder');
 var balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 var findParent_1 = require('./findParent');
 var newIm = require('./utils').newIm;
 // ---------helper----
 // -------------------
-var findInorderSuccessor = (function (inOrder) {
-    return function findInorderSuccessor(root, parentValue) {
-        var reachedParent = false;
-        var nextOfKin = null;
-        inOrder(root, function (node) {
-            if (node.value === parentValue) {
-                reachedParent = true;
-                return;
-            }
-            if (reachedParent) {
-                nextOfKin = node;
-            }
-        });
-        return nextOfKin;
-    };
-})(inOrder_1.default);
+function findInorderSuccessor(parent) {
+    return (function leftMost(start) {
+        return start.left ? leftMost(start.left) : start;
+    }(parent.right));
+}
 var BSTDelete = {
     deleteLeaf: function (isLeft) { return function (parent) {
         var proto = Object.getPrototypeOf(parent);
@@ -40,11 +28,13 @@ var BSTDelete = {
     }; },
     deleteNodeWithOneChild: function (parent) {
         /*
-                  A
+                    10
     
-               D     B
+               5         20
     
-                       C
+            1    7          30
+              
+              6           22
          */
         var proto = Object.getPrototypeOf(parent);
         var _newIm = function () {
@@ -56,17 +46,17 @@ var BSTDelete = {
         };
         if (parent.left) {
             return _newIm(parent, {
-                left: _newIm(parent.left.left || parent.left.right)
+                left: _newIm(parent.left.left || parent.left.right),
             });
         }
         else if (parent.right) {
             return _newIm(parent, {
-                right: _newIm(parent.right.left || parent.right.right)
+                right: _newIm(parent.right.left || parent.right.right),
             });
         }
     },
     deleteNodeWithTwoChildren: function (parent) {
-        var nextOfKin = findInorderSuccessor(parent, parent.value);
+        var nextOfKin = findInorderSuccessor(parent);
         // remove the nextOfKin from its original position
         var parentOfNextOfKin = findParent_1.findParent(parent, nextOfKin.value);
         // copy the 'nextOfKin' to where the parent is
@@ -100,28 +90,28 @@ function findParentAndChild(root, childValue) {
         if (_root.value === _find) {
             return _root;
         }
-        var toTraverse = (_root.value > _find) ? _root.left : _root.right;
+        var toTraverse = _root.value > _find ? _root.left : _root.right;
         var result = traverse(toTraverse, _find);
-        if (result && !result.hasOwnProperty("parent")) {
+        if (result && !result.hasOwnProperty('parent')) {
             // we found the node to delete
             // and are currently in its parent node
             return {
                 parent: _root,
-                child: result
+                child: result,
             };
         }
         else if (result) {
             return result;
         }
-        throw new Error("kvo stava tuk");
-    }(root, childValue));
+        throw new Error('kvo stava tuk');
+    })(root, childValue);
 }
 function generateNodeMeta(root, value) {
     var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
     return {
         isLeaf: !child.left && !child.right,
         isOnlyChild: !!(parent.left && !parent.right) || !!(!parent.left && parent.right),
-        isLeft: (parent.left && parent.left.value === child.value)
+        isLeft: parent.left && parent.left.value === child.value,
     };
 }
 function _deleteNode(root, value) {
