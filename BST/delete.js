@@ -17,10 +17,10 @@ function findInorderSuccessorOf(root, value) {
             // go left
             return traverse(_root.left, _find);
         }
-    }(root, value));
+    })(root, value);
     return (function leftMost(_start) {
         return _start.left ? leftMost(_start.left) : _start;
-    }(start.right));
+    })(start.right);
 }
 var BSTDelete = {
     deleteLeaf: function (isLeft) { return function (root, value) {
@@ -32,13 +32,61 @@ var BSTDelete = {
             }
             return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
-        if (isLeft) {
-            return _newIm(parent, { left: null });
-        }
-        else {
-            return _newIm(parent, { right: null });
-        }
-        // attach
+        var deleted = (function traverse(_root, _find) {
+            if (_root === null) {
+                return null;
+            }
+            if (_root.value === _find) {
+                return { node: _root, isTarget: true };
+            }
+            if (_root.value < _find) {
+                // go right
+                var child = traverse(_root.right, _find);
+                if (child === null) {
+                    return null;
+                }
+                if (child.isTarget) {
+                    return {
+                        node: _newIm(_root, {
+                            right: null,
+                        }),
+                        isTarget: false,
+                    };
+                }
+                else {
+                    return {
+                        node: _newIm(_root, {
+                            right: child.node,
+                        }),
+                        isTarget: false,
+                    };
+                }
+            }
+            else if (_root.value > _find) {
+                // go left;
+                var child = traverse(_root.left, _find);
+                if (child === null) {
+                    return null;
+                }
+                if (child.isTarget) {
+                    return {
+                        node: _newIm(_root, {
+                            left: null,
+                        }),
+                        isTarget: false,
+                    };
+                }
+                else {
+                    return {
+                        node: _newIm(_root, {
+                            left: child.node,
+                        }),
+                        isTarget: false,
+                    };
+                }
+            }
+        })(root, value);
+        return deleted ? deleted.node : null;
     }; },
     deleteNodeWithOneChild: function (root, value) {
         var proto = Object.getPrototypeOf(parent);
@@ -49,7 +97,7 @@ var BSTDelete = {
             }
             return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
-        (function traverse(_root, _find) {
+        var deleted = (function traverse(_root, _find) {
             // if there is no such node,
             // return null
             if (_root === null) {
@@ -63,65 +111,55 @@ var BSTDelete = {
             // if we did not find it, continue searching
             if (_root.value < _find) {
                 var child = traverse(_root.right, _find);
-                // when we find the child, remove the 
+                // when we find the child, remove the
                 // node to delete by updating the parent links
-                if (child && child.isTarget) {
+                if (child === null) {
+                    return null;
+                }
+                if (child.isTarget) {
                     return {
                         node: _newIm(_root, {
                             right: _newIm(_root.right.left || _root.right.right),
                         }),
-                        isTarget: false
-                    };
-                }
-                else if (child !== null) {
-                    return {
-                        node: _newIm(_root, {
-                            right: child.node
-                        }),
-                        isTarget: false
+                        isTarget: false,
                     };
                 }
                 else {
                     return {
                         node: _newIm(_root, {
-                            right: null
+                            right: child.node,
                         }),
-                        isTarget: false
+                        isTarget: false,
                     };
                 }
             }
             else if (_root.value > _find) {
                 // go left
                 var child = traverse(_root.left, _find);
-                // when we find the child, remove the 
+                // when we find the child, remove the
                 // node to delete by updating the parent links
-                if (child && child.isTarget) {
+                if (child === null) {
+                    return null;
+                }
+                if (child.isTarget) {
                     return {
                         node: _newIm(_root, {
                             left: _newIm(_root.left.left || _root.left.right),
                         }),
-                        isTarget: false
-                    };
-                }
-                else if (child !== null) {
-                    return {
-                        node: _newIm(_root, {
-                            left: child.node
-                        }),
-                        isTarget: false
+                        isTarget: false,
                     };
                 }
                 else {
                     return {
                         node: _newIm(_root, {
-                            left: null
+                            left: child.node,
                         }),
-                        isTarget: false
+                        isTarget: false,
                     };
                 }
             }
-        }(root, value));
-        // attach
+        })(root, value);
+        return deleted ? deleted.node : null;
     },
     deleteNodeWithTwoChildren: function (root, value) {
         var proto = Object.getPrototypeOf(root);
@@ -138,13 +176,15 @@ var BSTDelete = {
         // node: iBST | null;
         // fromLeft: boolean;
         // fromRight: boolean;
-        (function traverse(_root, _find) {
+        return (function traverse(_root, _find) {
             // if parent of next of kin - set one of the child nodes to null
             // return new parent of next of kin
             if (_root.value === parentOfNextOfKin.node.value) {
                 return _newIm(parentOfNextOfKin.node, {
                     left: parentOfNextOfKin.fromLeft ? null : parentOfNextOfKin.node.left,
-                    right: parentOfNextOfKin.fromRight ? null : parentOfNextOfKin.node.right,
+                    right: parentOfNextOfKin.fromRight
+                        ? null
+                        : parentOfNextOfKin.node.right,
                 });
             }
             // if parent node - set node to next of kin
@@ -152,13 +192,13 @@ var BSTDelete = {
             if (_root.left && _root.left.value === _find) {
                 // found parent, attach
                 return _newIm(_root, {
-                    left: nextOfKin.node
+                    left: nextOfKin.node,
                 });
             }
             else if (_root.right && _root.right.value === _find) {
                 // found parent, attach
                 return _newIm(_root, {
-                    right: nextOfKin.node
+                    right: nextOfKin.node,
                 });
             }
             // ----
@@ -167,17 +207,17 @@ var BSTDelete = {
                 // go right
                 var child = traverse(_root.right, _find);
                 return _newIm(_root, {
-                    right: child
+                    right: child,
                 });
             }
             else if (_root.value > parentOfNextOfKin.node.value) {
                 // go left
                 var child = traverse(_root.left, _find);
                 return _newIm(_root, {
-                    left: child
+                    left: child,
                 });
             }
-        }(root, value));
+        })(root, value);
     },
 };
 /**
