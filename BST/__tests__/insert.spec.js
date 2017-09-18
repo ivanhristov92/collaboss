@@ -241,7 +241,7 @@ function insertMany(values) {
                 var k = Number(val);
                 var found = find(bst, k);
                 if (!found) {
-                    var c = void 0;
+                    pass = false;
                 }
             });
         }

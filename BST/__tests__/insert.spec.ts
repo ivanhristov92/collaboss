@@ -316,7 +316,7 @@ function insertMany(values){
                 let k = Number(val)
                 let found = find(bst, k);
                 if(!found){
-                    let c;
+                    pass = false
                 }
             })
         }

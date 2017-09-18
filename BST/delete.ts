@@ -262,7 +262,7 @@ const BSTDelete: BSTDelete = {
 
 type Traits = {
   isLeaf: boolean;
-  isOnlyChild: boolean;
+  hasOneChild: boolean;
   isLeft: boolean;
 };
 
@@ -275,11 +275,11 @@ type Traits = {
  */
 function chooseDeleteMethod({
   isLeaf,
-  isOnlyChild,
+  hasOneChild,
   isLeft,
 }: Traits): BSTDeleteMethod {
   if (isLeaf) return BSTDelete.deleteLeaf(isLeft);
-  if (isOnlyChild) return BSTDelete.deleteNodeWithOneChild;
+  if (hasOneChild) return BSTDelete.deleteNodeWithOneChild;
   return BSTDelete.deleteNodeWithTwoChildren;
 }
 
@@ -315,13 +315,13 @@ function findParentAndChild(root: iBST, childValue: number): ParentAndChild {
 }
 
 function generateNodeMeta(root, value): Traits {
-  let { parent, child } = findParentAndChild(root, value);
+  let { parent, child: target } = findParentAndChild(root, value);
 
   return {
-    isLeaf: !child.left && !child.right,
-    isOnlyChild:
-      !!(parent.left && !parent.right) || !!(!parent.left && parent.right),
-    isLeft: parent.left && parent.left.value === child.value,
+    isLeaf: !target.left && !target.right,
+    hasOneChild:
+      !!(target.left && !target.right) || !!(!target.left && target.right),
+    isLeft: parent.left ? parent.left.value === target.value : false,
   };
 }
 

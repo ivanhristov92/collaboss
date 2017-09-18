@@ -228,10 +228,10 @@ var BSTDelete = {
  * @returns {BSTDeleteMethod}
  */
 function chooseDeleteMethod(_a) {
-    var isLeaf = _a.isLeaf, isOnlyChild = _a.isOnlyChild, isLeft = _a.isLeft;
+    var isLeaf = _a.isLeaf, hasOneChild = _a.hasOneChild, isLeft = _a.isLeft;
     if (isLeaf)
         return BSTDelete.deleteLeaf(isLeft);
-    if (isOnlyChild)
+    if (hasOneChild)
         return BSTDelete.deleteNodeWithOneChild;
     return BSTDelete.deleteNodeWithTwoChildren;
 }
@@ -260,11 +260,11 @@ function findParentAndChild(root, childValue) {
     })(root, childValue);
 }
 function generateNodeMeta(root, value) {
-    var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
+    var _a = findParentAndChild(root, value), parent = _a.parent, target = _a.child;
     return {
-        isLeaf: !child.left && !child.right,
-        isOnlyChild: !!(parent.left && !parent.right) || !!(!parent.left && parent.right),
-        isLeft: parent.left && parent.left.value === child.value,
+        isLeaf: !target.left && !target.right,
+        hasOneChild: !!(target.left && !target.right) || !!(!target.left && target.right),
+        isLeft: parent.left ? parent.left.value === target.value : false,
     };
 }
 function _deleteNode(root, value) {

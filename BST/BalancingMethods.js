@@ -208,6 +208,9 @@ var balancingStrategy = (function (findParent, chooseMethod, attachingStrategy) 
         var balanceFn = chooseMethod(imbalancedSubTree);
         return {
             apply: function () {
+                if(typeof balanceFn !== "function"){
+                    let m;
+                }
                 var balancedSubTree = balanceFn(imbalancedSubTree);
                 var balanced = attachingStrategy(root, parent, balancedSubTree);
                 return { balanced: balanced };
