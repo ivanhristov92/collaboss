@@ -49,16 +49,78 @@ var BSTDelete = {
             }
             return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
         };
-        if (parent.left) {
-            return _newIm(parent, {
-                left: _newIm(parent.left.left || parent.left.right),
-            });
-        }
-        else if (parent.right) {
-            return _newIm(parent, {
-                right: _newIm(parent.right.left || parent.right.right),
-            });
-        }
+        (function traverse(_root, _find) {
+            // if there is no such node,
+            // return null
+            if (_root === null) {
+                return null;
+            }
+            // find the node to delete and return it
+            // to get to the parent
+            if (_root.value === _find) {
+                return { node: _root, isTarget: true };
+            }
+            // if we did not find it, continue searching
+            if (_root.value < _find) {
+                var child = traverse(_root.right, _find);
+                // when we find the child, remove the 
+                // node to delete by updating the parent links
+                if (child && child.isTarget) {
+                    return {
+                        node: _newIm(_root, {
+                            right: _newIm(_root.right.left || _root.right.right),
+                        }),
+                        isTarget: false
+                    };
+                }
+                else if (child !== null) {
+                    return {
+                        node: _newIm(_root, {
+                            right: child.node
+                        }),
+                        isTarget: false
+                    };
+                }
+                else {
+                    return {
+                        node: _newIm(_root, {
+                            right: null
+                        }),
+                        isTarget: false
+                    };
+                }
+            }
+            else if (_root.value > _find) {
+                // go left
+                var child = traverse(_root.left, _find);
+                // when we find the child, remove the 
+                // node to delete by updating the parent links
+                if (child && child.isTarget) {
+                    return {
+                        node: _newIm(_root, {
+                            left: _newIm(_root.left.left || _root.left.right),
+                        }),
+                        isTarget: false
+                    };
+                }
+                else if (child !== null) {
+                    return {
+                        node: _newIm(_root, {
+                            left: child.node
+                        }),
+                        isTarget: false
+                    };
+                }
+                else {
+                    return {
+                        node: _newIm(_root, {
+                            left: null
+                        }),
+                        isTarget: false
+                    };
+                }
+            }
+        }(root, value));
         // attach
     },
     deleteNodeWithTwoChildren: function (root, value) {
