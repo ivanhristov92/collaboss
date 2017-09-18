@@ -2,6 +2,7 @@
 var inOrder_1 = require('./inOrder');
 var balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 var findParent_1 = require('./findParent');
+var newIm = require('./utils').newIm;
 // ---------helper----
 // -------------------
 var findInorderSuccessor = (function (inOrder) {
@@ -22,13 +23,20 @@ var findInorderSuccessor = (function (inOrder) {
 })(inOrder_1.default);
 var BSTDelete = {
     deleteLeaf: function (isLeft) { return function (parent) {
+        var proto = Object.getPrototypeOf(parent);
+        var _newIm = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
+        };
         if (isLeft) {
-            parent.left = null;
+            return _newIm(parent, { left: null });
         }
         else {
-            parent.right = null;
+            return _newIm(parent, { right: null });
         }
-        return parent;
     }; },
     deleteNodeWithOneChild: function (parent) {
         /*
@@ -38,10 +46,24 @@ var BSTDelete = {
     
                        C
          */
-        parent.left
-            ? (parent.left = parent.left.left || parent.left.right)
-            : (parent.right = parent.right.left || parent.right.right);
-        return parent;
+        var proto = Object.getPrototypeOf(parent);
+        var _newIm = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
+        };
+        if (parent.left) {
+            return _newIm(parent, {
+                left: _newIm(parent.left.left || parent.left.right)
+            });
+        }
+        else if (parent.right) {
+            return _newIm(parent, {
+                right: _newIm(parent.right.left || parent.right.right)
+            });
+        }
     },
     deleteNodeWithTwoChildren: function (parent) {
         var nextOfKin = findInorderSuccessor(parent, parent.value);
@@ -71,39 +93,31 @@ function chooseDeleteMethod(_a) {
     return BSTDelete.deleteNodeWithTwoChildren;
 }
 function findParentAndChild(root, childValue) {
-    var toReturn = {
-        parent: null,
-        child: null,
-    };
-    inOrder_1.default(root, function (node) {
-        if (node.value === childValue) {
-            var f = void 0;
+    return (function traverse(_root, _find) {
+        if (_root === null) {
+            return null;
         }
-    });
-    inOrder_1.default(root, function (node) {
-        if (node.left && node.left.value === childValue) {
-            toReturn.parent = node;
-            toReturn.child = node.left;
+        if (_root.value === _find) {
+            return _root;
         }
-        else if (node.right && node.right.value === childValue) {
-            toReturn.parent = node;
-            toReturn.child = node.right;
+        var toTraverse = (_root.value > _find) ? _root.left : _root.right;
+        var result = traverse(toTraverse, _find);
+        if (result && !result.hasOwnProperty("parent")) {
+            // we found the node to delete
+            // and are currently in its parent node
+            return {
+                parent: _root,
+                child: result
+            };
         }
-        else {
-            var d = void 0;
+        else if (result) {
+            return result;
         }
-    });
-    if (!toReturn.child) {
-        console.log("could not delete value ", childValue);
-        var c = void 0;
-    }
-    return toReturn;
+        throw new Error("kvo stava tuk");
+    }(root, childValue));
 }
 function generateNodeMeta(root, value) {
     var _a = findParentAndChild(root, value), parent = _a.parent, child = _a.child;
-    if (!child) {
-        var c = void 0;
-    }
     return {
         isLeaf: !child.left && !child.right,
         isOnlyChild: !!(parent.left && !parent.right) || !!(!parent.left && parent.right),

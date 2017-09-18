@@ -3,6 +3,8 @@ import { arch } from 'os';
 import inOrder from './inOrder';
 const balanceIfNecessary = require('./BalancingMethods').balanceIfNecessary;
 import {findParent} from './findParent';
+const newIm = require('./utils').newIm;
+
 
 // ---------helper----
 // -------------------
@@ -38,12 +40,19 @@ type BSTDelete = {
 
 const BSTDelete: BSTDelete = {
   deleteLeaf: (isLeft: boolean)=>(parent: iBST) => {
+
+    let proto = Object.getPrototypeOf(parent);
+    const _newIm = function(...args : any[]) {
+      return Object.freeze(
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
+      );
+    };
+
     if(isLeft){
-      parent.left = null;
+      return _newIm(parent, {left: null});
     } else {
-      parent.right = null;
+      return _newIm(parent, {right: null});
     }
-    return parent;
   },
 
   deleteNodeWithOneChild(parent: iBST) {
@@ -55,11 +64,23 @@ const BSTDelete: BSTDelete = {
                    C
      */
 
-    parent.left
-      ? (parent.left = parent.left.left || parent.left.right)
-      : (parent.right = parent.right.left || parent.right.right);
+    let proto = Object.getPrototypeOf(parent);
+    const _newIm = function(...args : any[]) {
+      return Object.freeze(
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
+      );
+    };
 
-    return parent;
+    if(parent.left){
+      return _newIm(parent, {
+        left: _newIm(parent.left.left || parent.left.right)
+      })
+    } else if(parent.right){
+      return _newIm(parent, {
+        right: _newIm(parent.right.left || parent.right.right)
+      })
+    }
+
   },
 
   deleteNodeWithTwoChildren(parent: iBST) {
@@ -103,43 +124,38 @@ type ParentAndChild = {
   child: iBST | null;
 };
 function findParentAndChild(root: iBST, childValue: number): ParentAndChild {
-  let toReturn = {
-    parent: null,
-    child: null,
-  };
 
-  inOrder(root, node => {
-    if(node.value === childValue){
-      let f;
+  return (function traverse(_root, _find){
+
+    if(_root === null){
+      return null;
     }
-  });
 
-  inOrder(root, node => {
-    if (node.left && node.left.value === childValue) {
-      toReturn.parent = node;
-      toReturn.child = node.left;
-    } else if (node.right && node.right.value === childValue) {
-      toReturn.parent = node;
-      toReturn.child = node.right;
-    } else {
-      let d;
+    if(_root.value === _find){
+      return _root;
     }
-  });
 
-  if(!toReturn.child){
-    console.log("could not delete value ", childValue)
+    let toTraverse = (_root.value > _find) ? _root.left : _root.right;
+    let result = traverse(toTraverse, _find);
+    if(result && !result.hasOwnProperty("parent")){
+      // we found the node to delete
+      // and are currently in its parent node
+      return {
+        parent: _root,
+        child: result
+      }
+    } else if(result){
+      return result;
+    }
 
-    let c;
-  }
+    throw new Error("kvo stava tuk")
 
-  return toReturn;
+  }(root, childValue));
 }
 
 function generateNodeMeta(root, value): Traits {
   let { parent, child } = findParentAndChild(root, value);
-  if(!child){
-    let c;
-  }
+
   return {
     isLeaf: !child.left && !child.right,
     isOnlyChild: !!(parent.left && !parent.right) || !!(!parent.left && parent.right),
