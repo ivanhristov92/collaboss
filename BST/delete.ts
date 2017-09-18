@@ -7,10 +7,25 @@ const newIm = require('./utils').newIm;
 
 // ---------helper----
 // -------------------
-function findInorderSuccessor(parent: iBST) {
-  return (function leftMost(start) {
-      return start.left ? leftMost(start.left) : start;
-    }(parent.right))
+function findInorderSuccessorOf(root: iBST, value: number) {
+
+  let start = (function traverse(_root, _find){
+    if(_root.value === _find){
+      return _root;
+    }
+    if(_root.value < _find){
+      // go right
+      return traverse(_root.right, _find)
+    } else if(_root.value > _find){
+      // go left
+      return traverse(_root.left, _find)
+    }
+  }(root, value))
+
+
+  return (function leftMost(_start) {
+      return _start.left ? leftMost(_start.left) : _start;
+    }(start.right))
 }
 // -------------------
 
@@ -30,7 +45,7 @@ type BSTDelete = {
 };
 
 const BSTDelete: BSTDelete = {
-  deleteLeaf: (isLeft: boolean) => (parent: iBST) => {
+  deleteLeaf: (isLeft: boolean) => (root: iBST, value: number) => {
     let proto = Object.getPrototypeOf(parent);
     const _newIm = function(...args: any[]) {
       return Object.freeze(
@@ -43,19 +58,11 @@ const BSTDelete: BSTDelete = {
     } else {
       return _newIm(parent, { right: null });
     }
+
+    // attach
   },
 
-  deleteNodeWithOneChild(parent: iBST) {
-    /*
-                10
-
-           5         20
-
-        1    7          30
-
-          6           22
-     */
-
+  deleteNodeWithOneChild(root: iBST, value: number) {
     let proto = Object.getPrototypeOf(parent);
     const _newIm = function(...args: any[]) {
       return Object.freeze(
@@ -72,22 +79,74 @@ const BSTDelete: BSTDelete = {
         right: _newIm(parent.right.left || parent.right.right),
       });
     }
+
+    // attach
+
   },
 
-  deleteNodeWithTwoChildren(parent: iBST) {
-    let nextOfKin = findInorderSuccessor(parent);
+  deleteNodeWithTwoChildren(root: iBST, value: number) {
+
+    let proto = Object.getPrototypeOf(root);
+    const _newIm = function(...args: any[]) {
+      return Object.freeze(
+          (<any>Object).assign(Object.create(proto), newIm(...args)),
+      );
+    };
+
+    let nextOfKin = findInorderSuccessorOf(root, value);
 
     // remove the nextOfKin from its original position
-    let parentOfNextOfKin = findParent(parent, nextOfKin.value);
+    let parentOfNextOfKin = findParent(root, nextOfKin.value);
+    // node: iBST | null;
+    // fromLeft: boolean;
+    // fromRight: boolean;
 
-    // copy the 'nextOfKin' to where the parent is
-    (<any>Object).assign(parent, nextOfKin);
 
-    parentOfNextOfKin.left.value === nextOfKin.value
-      ? (parentOfNextOfKin.left = null)
-      : (parentOfNextOfKin.right = null);
+    (function traverse(_root, _find){
 
-    return parent;
+      // if parent of next of kin - set one of the child nodes to null
+      // return new parent of next of kin
+
+      if(_root.value === parentOfNextOfKin.node.value){
+        return _newIm(parentOfNextOfKin.node, {
+          left: parentOfNextOfKin.fromLeft ? null : parentOfNextOfKin.node.left,
+          right: parentOfNextOfKin.fromRight ? null : parentOfNextOfKin.node.right,
+        })
+      }
+
+      // if parent node - set node to next of kin
+      // return new parent
+
+      if(_root.left && _root.left.value === _find){
+        // found parent, attach
+        return _newIm(_root, {
+          left: nextOfKin.node
+        })
+      } else if (_root.right && _root.right.value === _find){
+        // found parent, attach
+        return _newIm(_root, {
+          right: nextOfKin.node
+        })
+      }
+
+      // ----
+      // else return new node with updated links, traverse??
+
+      if(_root.value < parentOfNextOfKin.node.value){
+        // go right
+        let child = traverse(_root.right, _find);
+        return _newIm(_root, {
+          right: child
+        })
+      } else if (_root.value > parentOfNextOfKin.node.value){
+        // go left
+        let child = traverse(_root.left, _find);
+        return _newIm(_root, {
+          left: child
+        })
+      }
+
+    }(root, value));
   },
 };
 
@@ -159,7 +218,7 @@ function generateNodeMeta(root, value): Traits {
 function _deleteNode(root: iBST, value: number): iBST {
   let nodeMeta = generateNodeMeta(root, value);
   let deleteFn = chooseDeleteMethod(nodeMeta);
-  return deleteFn(root);
+  return deleteFn(root, value);
 }
 
 module.exports = ((

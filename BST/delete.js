@@ -4,13 +4,26 @@ var findParent_1 = require('./findParent');
 var newIm = require('./utils').newIm;
 // ---------helper----
 // -------------------
-function findInorderSuccessor(parent) {
-    return (function leftMost(start) {
-        return start.left ? leftMost(start.left) : start;
-    }(parent.right));
+function findInorderSuccessorOf(root, value) {
+    var start = (function traverse(_root, _find) {
+        if (_root.value === _find) {
+            return _root;
+        }
+        if (_root.value < _find) {
+            // go right
+            return traverse(_root.right, _find);
+        }
+        else if (_root.value > _find) {
+            // go left
+            return traverse(_root.left, _find);
+        }
+    }(root, value));
+    return (function leftMost(_start) {
+        return _start.left ? leftMost(_start.left) : _start;
+    }(start.right));
 }
 var BSTDelete = {
-    deleteLeaf: function (isLeft) { return function (parent) {
+    deleteLeaf: function (isLeft) { return function (root, value) {
         var proto = Object.getPrototypeOf(parent);
         var _newIm = function () {
             var args = [];
@@ -25,17 +38,9 @@ var BSTDelete = {
         else {
             return _newIm(parent, { right: null });
         }
+        // attach
     }; },
-    deleteNodeWithOneChild: function (parent) {
-        /*
-                    10
-    
-               5         20
-    
-            1    7          30
-              
-              6           22
-         */
+    deleteNodeWithOneChild: function (root, value) {
         var proto = Object.getPrototypeOf(parent);
         var _newIm = function () {
             var args = [];
@@ -54,17 +59,63 @@ var BSTDelete = {
                 right: _newIm(parent.right.left || parent.right.right),
             });
         }
+        // attach
     },
-    deleteNodeWithTwoChildren: function (parent) {
-        var nextOfKin = findInorderSuccessor(parent);
+    deleteNodeWithTwoChildren: function (root, value) {
+        var proto = Object.getPrototypeOf(root);
+        var _newIm = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i - 0] = arguments[_i];
+            }
+            return Object.freeze(Object.assign(Object.create(proto), newIm.apply(void 0, args)));
+        };
+        var nextOfKin = findInorderSuccessorOf(root, value);
         // remove the nextOfKin from its original position
-        var parentOfNextOfKin = findParent_1.findParent(parent, nextOfKin.value);
-        // copy the 'nextOfKin' to where the parent is
-        Object.assign(parent, nextOfKin);
-        parentOfNextOfKin.left.value === nextOfKin.value
-            ? (parentOfNextOfKin.left = null)
-            : (parentOfNextOfKin.right = null);
-        return parent;
+        var parentOfNextOfKin = findParent_1.findParent(root, nextOfKin.value);
+        // node: iBST | null;
+        // fromLeft: boolean;
+        // fromRight: boolean;
+        (function traverse(_root, _find) {
+            // if parent of next of kin - set one of the child nodes to null
+            // return new parent of next of kin
+            if (_root.value === parentOfNextOfKin.node.value) {
+                return _newIm(parentOfNextOfKin.node, {
+                    left: parentOfNextOfKin.fromLeft ? null : parentOfNextOfKin.node.left,
+                    right: parentOfNextOfKin.fromRight ? null : parentOfNextOfKin.node.right,
+                });
+            }
+            // if parent node - set node to next of kin
+            // return new parent
+            if (_root.left && _root.left.value === _find) {
+                // found parent, attach
+                return _newIm(_root, {
+                    left: nextOfKin.node
+                });
+            }
+            else if (_root.right && _root.right.value === _find) {
+                // found parent, attach
+                return _newIm(_root, {
+                    right: nextOfKin.node
+                });
+            }
+            // ----
+            // else return new node with updated links, traverse??
+            if (_root.value < parentOfNextOfKin.node.value) {
+                // go right
+                var child = traverse(_root.right, _find);
+                return _newIm(_root, {
+                    right: child
+                });
+            }
+            else if (_root.value > parentOfNextOfKin.node.value) {
+                // go left
+                var child = traverse(_root.left, _find);
+                return _newIm(_root, {
+                    left: child
+                });
+            }
+        }(root, value));
     },
 };
 /**
@@ -117,7 +168,7 @@ function generateNodeMeta(root, value) {
 function _deleteNode(root, value) {
     var nodeMeta = generateNodeMeta(root, value);
     var deleteFn = chooseDeleteMethod(nodeMeta);
-    return deleteFn(root);
+    return deleteFn(root, value);
 }
 module.exports = (function (_deleteNode, _balanceIfNecessary) {
     return function deleteNode(value) {
