@@ -274,9 +274,14 @@ function _deleteNode(root, value) {
 }
 module.exports = (function (_deleteNode, _balanceIfNecessary) {
     return function deleteNode(value) {
-        var afterDeletion = _deleteNode(this, value);
-        var balanced = _balanceIfNecessary(afterDeletion);
-        return balanced.root;
+        var deleted = _deleteNode(this, value);
+        if (deleted) {
+            // return the updated tree
+            var balanced = _balanceIfNecessary(deleted);
+            return balanced.root;
+        }
+        // return the original root
+        return this;
     };
 })(_deleteNode, balanceIfNecessary);
 //# sourceMappingURL=delete.js.map

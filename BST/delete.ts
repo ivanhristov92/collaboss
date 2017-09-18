@@ -32,7 +32,7 @@ type BSTDeleteWithTwoChildren = (parent: iBST) => iBST;
 type BSTDeleteLeaf = (isLeft?: boolean) => (parent: iBST) => iBST;
 
 type BSTDeleteMethod =
-  | BSTDeleteWithOneChild
+    BSTDeleteWithOneChild
   | BSTDeleteWithTwoChildren
   | BSTDeleteLeaf;
 
@@ -336,7 +336,14 @@ module.exports = ((
   _balanceIfNecessary: (root: iBST) => { root: iBST },
 ) =>
   function deleteNode(value: number): iBST {
-    let afterDeletion = _deleteNode(this, value);
-    let balanced = _balanceIfNecessary(afterDeletion);
-    return balanced.root;
+    let deleted = _deleteNode(this, value);
+    if(deleted){
+
+    // return the updated tree
+      let balanced = _balanceIfNecessary(deleted);
+      return balanced.root;
+    }
+    // return the original root
+    return this;
+
   })(_deleteNode, balanceIfNecessary);
